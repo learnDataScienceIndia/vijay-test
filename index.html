@@ -927,44 +927,18 @@
         }
 
         /* ===== BLANK PAGE (no heavy fixed margin) ===== */
-       .blank-content-wrap {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    padding: 6mm 8mm;
-    border: 1px solid rgba(20, 90, 35, 0.25);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-    background: transparent !important;
-}
-
-/* Watermark on additional text pages */
-.blank-content-wrap .watermark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%;
-    opacity: 0.08;
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* Keep text and tables above watermark */
-.simple-text-area {
-    position: relative;
-    z-index: 1;
-    background: transparent !important;
-}
-
-.blank-content-wrap .footer-accreditations {
-    position: relative;
-    z-index: 1;
-}
+        .blank-content-wrap {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 6mm 8mm;
+            border: 1px solid rgba(20, 90, 35, 0.25);
+            border-radius: 4px;
+            overflow: hidden;
+        }
 
         /* ===== SIMPLE TEXT AREA (Plain Text Page) ===== */
         .simple-text-area {
@@ -1280,7 +1254,7 @@
 
         <!-- PAGE 1: Certificate -->
         <div class="page" id="page-1">
-            <img src="https://github.com/learnDataScienceIndia/signature/blob/0fa070974f7c06bd9b8e544b431c8d56c19c57af/t%20logo.png?raw=true"
+            <img src="https://github.com/learnDataScienceIndia/aatera-COD/blob/main/aatera-loop-logo-2.png"
                 class="watermark" alt="">
 
             <!-- Page 1 action buttons -->
@@ -1304,16 +1278,16 @@
                 <div class="header">
                     <!-- Left: Logo -->
                     <div style="display: flex; align-items: center;">
-                        <img src="https://github.com/learnDataScienceIndia/signature/blob/0fa070974f7c06bd9b8e544b431c8d56c19c57af/t%20logo.png?raw=true"
-                            alt="Reloop Recycling FZE"
-                            style="width: 120px; image-rendering: -webkit-optimize-contrast; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; image-rendering: pixelated; filter: contrast(1.15) saturate(1.1);">
+                        <img src="https://learndatascienceindia.github.io/aatera-proposal/logo%20copy.png"
+                            alt="Aatera COD"
+                            style="width: 250px; image-rendering: -webkit-optimize-contrast; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; image-rendering: pixelated; filter: contrast(1.15) saturate(1.1);">
                     </div>
 
                     <!-- Right: Company Name & Contact Info -->
                     <div class="contact-info" style="align-items: flex-start;">
                         <div contenteditable="true"
                             style="font-size: 14px; font-family: 'Oswald', sans-serif; font-weight: 800; color: var(--dark-green); letter-spacing: 0.5px; line-height: 1.1; margin-bottom: 2px;">
-                            RELOOP RECYCLING FZE</div>
+                            Aatera Loop Battery Recycling L.L.C</div>
 
                         <div class="contact-row">
                             <i class="fa-solid fa-phone"></i>
@@ -1321,15 +1295,17 @@
                         </div>
                         <div class="contact-row">
                             <i class="fa-solid fa-location-dot"></i>
-                            <span contenteditable="true">RA08 TC05 JAFZA, Dubai, UAE</span>
+                            <span contenteditable="true">Plot # 598-1766 – WH 17,<br/>
+                      Universal Global DMCC Compound,<br/>
+                    DIP 1, Dubai, UAE</span>
                         </div>
                         <div class="contact-row">
                             <i class="fa-solid fa-globe"></i>
-                            <span contenteditable="true">www.reloopglobal.com</span>
+                            <span contenteditable="true">www.aatera.com</span>
                         </div>
                         <div class="contact-row">
                             <i class="fa-solid fa-envelope"></i>
-                            <span contenteditable="true">info@reloopglobal.com</span>
+                            <span contenteditable="true">info@aatera.com</span>
                         </div>
                     </div>
                 </div>
@@ -1380,7 +1356,7 @@
                                     <div class="remove-row-btn" onclick="this.closest('tr').remove()">×</div>Certificate
                                     No:
                                 </th>
-                                <td id="cert-no" contenteditable="true" class="divider-left">RRF-004/Apr/2026</td>
+                                <td id="cert-no" contenteditable="true" class="divider-left">ALR-004/Apr/2026</td>
                                 <th contenteditable="true">Remarks:</th>
                                 <td contenteditable="true">100% Recycled and 0 landfill</td>
                             </tr>
@@ -1398,17 +1374,17 @@
                 <!-- Paragraphs -->
                 <div class="content-text">
                     <p contenteditable="true">
-                       Reloop Recycling FZE certifies that the materials described above have been destroyed/recycled
-                        in accordance with our standard procedures and in compliance with all applicable laws, regulations, 
-                        and conditions, including Federal Law No. 24 of 1999 concerning the Protection and Development of the Environment,
+                        Aatera Loop Battery Recycling L.L.C certifies that the materials described above have been destroyed/recycled in accordance with our
+                        standard procedures and in compliance with all applicable laws, regulations, and conditions,
+                        including Federal Law No. 24 of 1999 concerning the Protection and Development of the Environment,
                         as amended by Federal Law No. 11 of 2006, and its Implementing Rules and Regulations.
                     </p>
                     <p contenteditable="true">
-                        We thank you for your efforts and commitment towards fulfilling your Corporate Environmental Responsibility.
+                       We thank you for your efforts and commitment towards fulfilling your Corporate Environmental Responsibility.
                     </p>
                     <p class="certify-statement" contenteditable="true">
-                        Reloop Recycling FZE further certifies that the recycling/destruction of
-                        these materials has been carried out in a manner that does not cause harm to human health or the environment,
+                        Aatera Loop Battery Recycling L.L.C further certifies that the recycling/destruction of these materials has been
+                        carried out in a manner that does not cause harm to human health or the environment,
                         either within or outside the United Arab Emirates
                     </p>
                 </div>
@@ -1454,7 +1430,7 @@
                     </div>
 
                     <div class="acc-item">
-                        <img src="https://github.com/learnDataScienceIndia/signature/blob/main/WhatsApp%20Image%202026-04-10%20at%2017.46.49.jpeg?raw=true"
+                        <img src="https://github.com/learnDataScienceIndia/aatera-COD/blob/main/LMS-logo.png?raw=true"
                             alt="Accreditations" style="height: 38px;">
                     </div>
                 </div>
@@ -1639,13 +1615,8 @@
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
-                <div class="blank-content-wrap" style="padding: 20mm; border: none;">
-
-    <!-- Background Watermark -->
-    <img src="https://github.com/learnDataScienceIndia/signature/blob/0fa070974f7c06bd9b8e544b431c8d56c19c57af/t%20logo.png?raw=true"
-         class="watermark" alt="">
-
-    <div class="simple-text-area rich-content-area" contenteditable="true"
+                <div class="blank-content-wrap" style="padding: 20mm; border: none; background: white;">
+                    <div class="simple-text-area rich-content-area" contenteditable="true"
                          data-placeholder="Click here to start typing, or paste an Excel table (Ctrl+V)..."
                          spellcheck="false" style="outline: none;"></div>
                     <div class="footer-accreditations" style="margin-top: auto; border-top: 1px solid #ccc;">
@@ -2843,7 +2814,7 @@
 
                 dateReceivedEl.innerText = formattedDate;
                 jobCompletedEl.innerText = formattedDate;
-                certNoEl.innerText = `RRF-004/${monthShort}/${year}`;
+                certNoEl.innerText = `ALR-004/${monthShort}/${year}`;
             }
         })();
     </script>
