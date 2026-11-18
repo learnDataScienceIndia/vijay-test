@@ -1602,8 +1602,7 @@
 
             const newPage = document.createElement('div');
             newPage.className = 'page';
-            newPage.style.padding = '0';
-            newPage.innerHTML = `
+                    newPage.innerHTML = `
                 <div class="page-actions" style="top: 10px; right: 10px;">
                     <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'up')" title="Move Up">
                         <i class="fa-solid fa-chevron-up"></i>
@@ -1615,9 +1614,7 @@
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
-           
-              <div class="blank-content-wrap"
-     style="padding: 20mm; border: 1px solid rgba(20, 90, 35, 0.8); background: transparent; position: relative; z-index: 1;">
+                <div class="blank-content-wrap" style="padding: 20mm; border: none; background: white;">
                     <div class="simple-text-area rich-content-area" contenteditable="true"
                          data-placeholder="Click here to start typing, or paste an Excel table (Ctrl+V)..."
                          spellcheck="false" style="outline: none;"></div>
