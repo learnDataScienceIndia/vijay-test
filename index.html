@@ -8,371 +8,233 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    /* ── Variables ── */
     :root{
       --green:#0a7f3f; --green-dk:#065c2c; --green-lt:#e8f5ed;
-      --blue:#2fa4d7;  --blue-dk:#1a6e9e;  --blue-lt:#e5f4fb;
-      --grey:#f4f6f8;  --border:#c8d4dc;
-      --text:#1a2332;  --muted:#6b7a8d;
+      --blue:#2fa4d7; --blue-dk:#1a6e9e; --blue-lt:#e5f4fb;
+      --grey:#f4f6f8; --border:#c8d4dc;
+      --text:#1a2332; --muted:#6b7a8d;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-
     body{
-      font-family:'Inter',sans-serif;
-      background:#d0dae3;
-      color:var(--text);
-      display:flex; flex-direction:column; align-items:center;
-      padding:18px 12px 40px;
-      min-height:100vh;
+      font-family:'Inter',sans-serif;background:#d0dae3;color:var(--text);
+      display:flex;flex-direction:column;align-items:center;
+      padding:18px 12px 40px;min-height:100vh;
     }
-
-    /* ═══════════════ TOOLBAR ═══════════════ */
     .toolbar{
-      width:100%; max-width:900px;
-      display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:12px; gap:10px; flex-wrap:wrap;
+      width:100%;max-width:900px;display:flex;justify-content:space-between;
+      align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap;
     }
     .toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
     .lbl{font-size:11px;font-weight:700;color:var(--muted);}
-
     select.cur-sel{
-      background:#fff; border:2px solid var(--green);
-      border-radius:7px; padding:5px 10px;
-      font-family:'Inter',sans-serif; font-size:13px;
-      font-weight:700; color:var(--green-dk); cursor:pointer; outline:none;
+      background:#fff;border:2px solid var(--green);border-radius:7px;
+      padding:5px 10px;font-family:'Inter',sans-serif;font-size:13px;
+      font-weight:700;color:var(--green-dk);cursor:pointer;outline:none;
     }
     .btn{
-      display:inline-flex; align-items:center; gap:6px;
-      font-family:'Inter',sans-serif; font-size:12px; font-weight:700;
-      padding:7px 16px; border-radius:20px; cursor:pointer;
-      transition:all .18s; border:none;
+      display:inline-flex;align-items:center;gap:6px;font-family:'Inter',sans-serif;
+      font-size:12px;font-weight:700;padding:7px 16px;border-radius:20px;
+      cursor:pointer;transition:all .18s;border:none;
     }
     .btn-add{background:var(--green-lt);color:var(--green-dk);border:1.5px solid var(--green);}
     .btn-add:hover{background:var(--green);color:#fff;}
     .btn-print{
-      background:linear-gradient(135deg,var(--green),var(--blue));
-      color:#fff; box-shadow:0 4px 16px rgba(10,127,63,.28);
-      padding:8px 20px;
+      background:linear-gradient(135deg,var(--green),var(--blue));color:#fff;
+      box-shadow:0 4px 16px rgba(10,127,63,.28);padding:8px 20px;
     }
     .btn-print:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(10,127,63,.38);}
     .btn-print svg{width:15px;height:15px;fill:currentColor;}
-
-    /* ═══════════════ INVOICE WRAPPER ═══════════════ */
-    .po-wrap{
-      width:100%; max-width:900px;
-      background:#fff; border-radius:12px; overflow:hidden;
+    .po-wrap,.tc-page{
+      width:100%;max-width:900px;background:#fff;border-radius:12px;overflow:hidden;
       box-shadow:0 8px 40px rgba(0,0,0,.14);
     }
-
-    /* ═══════════════ HEADER ═══════════════ */
     .po-header{background:#fff;}
-
-    /* Thin brand accent bar at very top */
-    .top-bar{
-      height:6px;
-      background:linear-gradient(90deg, var(--green) 0%, var(--blue) 100%);
-    }
-
-    /* Info strip — 3 columns: Company | Get in touch | Logo */
+    .top-bar{height:6px;background:linear-gradient(90deg,var(--green) 0%,var(--blue) 100%);}
     .info-strip{
-      display:grid;
-      grid-template-columns:1fr 1fr auto;
-      align-items:center;
-      border-bottom:2px solid var(--border);
-      background:var(--grey);
+      display:grid;grid-template-columns:1fr 1fr auto;align-items:center;
+      border-bottom:2px solid var(--border);background:var(--grey);
     }
     .info-cell{padding:13px 18px;}
     .info-cell:first-child{border-right:1.5px solid var(--border);}
     .info-cell:nth-child(2){border-right:1.5px solid var(--border);}
-
-    /* Logo column inside info strip */
-    .info-logo{
-      padding:10px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .info-logo img{
-      width:90px;
-      height:90px;
-      object-fit:contain;
-      display:block;
-    }
-
-    /* Editable text */
+    .info-logo{padding:10px 16px;display:flex;align-items:center;justify-content:center;}
+    .info-logo img{width:90px;height:90px;object-fit:contain;display:block;}
     [contenteditable]{
-      outline:none;
-      border-bottom:1px dashed transparent;
-      transition:border-color .2s;
-      display:inline-block;
-      min-width:20px;
+      outline:none;border-bottom:1px dashed transparent;transition:border-color .2s;
+      display:inline-block;min-width:20px;
     }
     [contenteditable]:hover{border-color:var(--blue);}
-    [contenteditable]:focus{
-      border-color:var(--green);
-      background:rgba(10,127,63,.04);
-      border-radius:2px;
-    }
-
+    [contenteditable]:focus{border-color:var(--green);background:rgba(10,127,63,.04);border-radius:2px;}
     .co-name{font-size:14px;font-weight:800;color:var(--green-dk);}
-    .co-trn {font-size:11px;color:var(--muted);margin-top:3px;font-weight:500;}
+    .co-trn{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500;}
     .touch-lbl{font-size:11.5px;font-weight:700;color:var(--blue-dk);margin-bottom:4px;}
     .touch-body{font-size:11px;color:var(--muted);line-height:1.65;}
-
-    /* ═══════════════ BODY ═══════════════ */
     .po-body{padding:14px 20px 16px;}
-
     .sec-head{
-      text-align:center; font-size:11.5px; font-weight:800;
-      letter-spacing:2px; text-transform:uppercase;
-      padding:7px 0 6px; border-bottom:1.5px solid var(--border);
-      margin-bottom:0;
+      text-align:center;font-size:11.5px;font-weight:800;letter-spacing:2px;
+      text-transform:uppercase;padding:7px 0 6px;border-bottom:1.5px solid var(--border);
     }
-
-    /* INVOICE META */
     .po-meta-tbl{width:100%;border-collapse:collapse;margin-bottom:11px;}
-    .po-meta-tbl td{
-      padding:5px 10px; border:1.5px solid var(--border); font-size:12px;
-    }
-    .po-meta-tbl td.lbl-td{
-      font-weight:700; width:100px; background:var(--grey); white-space:nowrap;
-    }
+    .po-meta-tbl td{padding:5px 10px;border:1.5px solid var(--border);font-size:12px;}
+    .po-meta-tbl td.lbl-td{font-weight:700;width:100px;background:var(--grey);white-space:nowrap;}
     .po-meta-tbl input{
-      border:none;outline:none;background:transparent;
-      width:100%;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);
+      border:none;outline:none;background:transparent;width:100%;
+      font-family:'Inter',sans-serif;font-size:12px;color:var(--text);
     }
-
-    /* BILL TO / SHIP TO */
     .sh-head{
-      font-size:10.5px;font-weight:700;letter-spacing:1.5px;
-      text-transform:uppercase;text-align:center;
-      padding:5px 0;background:var(--grey);
+      font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+      text-align:center;padding:5px 0;background:var(--grey);
       border:1.5px solid var(--border);border-bottom:none;
     }
     .sh-tbl{width:100%;border-collapse:collapse;margin-bottom:11px;}
     .sh-tbl td{padding:5px 10px;border:1.5px solid var(--border);font-size:12px;vertical-align:top;}
     .sh-tbl td.sl{font-weight:700;width:110px;background:var(--grey);white-space:nowrap;}
     .sh-tbl input,.sh-tbl textarea{
-      border:none;outline:none;background:transparent;
-      width:100%;font-family:'Inter',sans-serif;
-      font-size:12px;color:var(--text);resize:none;
+      border:none;outline:none;background:transparent;width:100%;
+      font-family:'Inter',sans-serif;font-size:12px;color:var(--text);resize:none;
     }
     .sh-tbl textarea{height:40px;}
-    /* vertical divider between Bill To and Ship To columns */
     .sh-tbl td.mid-sep{border-left:2.5px solid var(--border);}
-
-    /* ITEMS TABLE */
     .item-tbl{width:100%;border-collapse:collapse;font-size:11.5px;}
-    .item-tbl thead tr{
-      background:linear-gradient(90deg,var(--green-dk),var(--blue-dk));
-      color:#fff;
-    }
+    .item-tbl thead tr{background:linear-gradient(90deg,var(--green-dk),var(--blue-dk));color:#fff;}
     .item-tbl thead th{
-      padding:7px 7px;font-size:10px;font-weight:700;
-      letter-spacing:.8px;text-transform:uppercase;
-      border:1px solid rgba(255,255,255,.2);text-align:center;white-space:nowrap;
+      padding:7px 7px;font-size:10px;font-weight:700;letter-spacing:.8px;
+      text-transform:uppercase;border:1px solid rgba(255,255,255,.2);
+      text-align:center;white-space:nowrap;
     }
     .item-tbl thead th.dh{text-align:left;}
-
     .item-tbl tbody tr{background:#fff;}
     .item-tbl tbody tr:nth-child(even){background:#f8fbfc;}
     .item-tbl tbody tr:hover{background:var(--green-lt);}
-    .item-tbl tbody td{
-      border:1px solid var(--border);
-      padding:3px 5px;text-align:center;vertical-align:middle;
-    }
+    .item-tbl tbody td{border:1px solid var(--border);padding:3px 5px;text-align:center;vertical-align:middle;}
     .item-tbl tbody td.dtd{text-align:left;}
     .item-tbl tbody td.sr{font-size:11px;font-weight:600;color:var(--muted);width:34px;}
-
-    .expand-input {
-      width: 100%;
-      min-height: 22px;
-      padding: 3px 4px;
-      font-family: 'Inter', sans-serif;
-      font-size: 11.5px;
-      color: var(--text);
-      outline: none;
-      text-align: center;
-      word-wrap: break-word;
-      background: transparent;
-      border: 1px solid transparent;
-      transition: background 0.2s, border-radius 0.2s;
+    .expand-input{
+      width:100%;min-height:22px;padding:3px 4px;font-family:'Inter',sans-serif;
+      font-size:11.5px;color:var(--text);outline:none;text-align:center;
+      word-wrap:break-word;background:transparent;border:1px solid transparent;
+      transition:background .2s,border-radius .2s;
     }
-    td.dtd .expand-input {
-      text-align: left;
+    td.dtd .expand-input{text-align:left;}
+    .expand-input:focus{background:rgba(10,127,63,.06);border-radius:3px;}
+    [contenteditable][data-placeholder]:empty:before{content:attr(data-placeholder);color:#999;pointer-events:none;}
+    .rm-col-btn{
+      background:rgba(255,255,255,.2);border:none;cursor:pointer;color:#fff;
+      font-size:10px;padding:2px 5px;border-radius:3px;transition:background .15s;margin-left:5px;
     }
-    .expand-input:focus {
-      background: rgba(10,127,63,.06);
-      border-radius: 3px;
-    }
-    [contenteditable][data-placeholder]:empty:before {
-      content: attr(data-placeholder);
-      color: #999;
-      pointer-events: none;
-    }
-
-    .rm-col-btn {
-      background: rgba(255,255,255,0.2); border: none; cursor: pointer;
-      color: #fff; font-size: 10px; padding: 2px 5px;
-      border-radius: 3px; transition: background .15s; margin-left: 5px;
-    }
-    .rm-col-btn:hover { background: rgba(255,0,0,0.6); }
-
+    .rm-col-btn:hover{background:rgba(255,0,0,.6);}
     .item-tbl tbody td input{
-      width:100%;border:none;background:transparent;
-      text-align:center;font-family:'Inter',sans-serif;
-      font-size:11.5px;color:var(--text);padding:3px 4px;outline:none;
+      width:100%;border:none;background:transparent;text-align:center;
+      font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text);padding:3px 4px;outline:none;
     }
     .item-tbl tbody td.dtd input{text-align:left;}
-    .item-tbl tbody td input:focus{
-      background:rgba(10,127,63,.06);border-radius:3px;
-    }
-
-    .amt-inp{font-weight:600;color:var(--green-dk) !important;}
-
-    /* Remove row */
+    .item-tbl tbody td input:focus{background:rgba(10,127,63,.06);border-radius:3px;}
+    .amt-inp{font-weight:600;color:var(--green-dk)!important;}
     .rm-btn{
-      background:none;border:none;cursor:pointer;
-      color:#c0392b;font-size:14px;padding:2px 5px;
-      border-radius:4px;transition:background .15s;
+      background:none;border:none;cursor:pointer;color:#c0392b;font-size:14px;
+      padding:2px 5px;border-radius:4px;transition:background .15s;
     }
     .rm-btn:hover{background:#fdecea;}
-
-    /* Grand total */
-    .gt-tr{background:linear-gradient(90deg,var(--green-dk),var(--blue-dk)) !important;}
-    .gt-tr td{padding:9px 12px !important;border-color:transparent !important;}
-    .gt-lbl{font-size:13px;font-weight:800;color:#fff;text-align:right !important;letter-spacing:.5px;}
-    .gt-val{font-size:17px;font-weight:800;color:#fff;text-align:center !important;white-space:nowrap;min-width:120px;}
-
-    /* ═══════════════ ROW CONTROLS ═══════════════ */
+    .discount-row td{
+      padding:7px 12px!important;border:none;border-bottom:1px solid var(--border);
+      font-weight:700;text-align:center;
+    }
+    .discount-row .discount-lbl{
+      text-align:right!important;border-right:2px solid #e74c3c;font-size:12px;
+    }
+    .discount-row .discount-amt{
+      border-left:2px solid #e74c3c;border-right:2px solid #e74c3c;white-space:nowrap;
+    }
+    .discount-input{
+      width:75px;border:none;outline:none;background:transparent;
+      font-family:'Inter',sans-serif;font-size:12px;font-weight:700;
+      text-align:center;color:var(--text);padding:3px;
+    }
+    .discount-input:focus{background:var(--green-lt);border-radius:3px;}
+    .gt-tr{background:linear-gradient(90deg,var(--green-dk),var(--blue-dk))!important;}
+    .gt-tr td{padding:9px 12px!important;border-color:transparent!important;}
+    .gt-lbl{font-size:13px;font-weight:800;color:#fff;text-align:right!important;letter-spacing:.5px;}
+    .gt-val{font-size:17px;font-weight:800;color:#fff;text-align:center!important;white-space:nowrap;min-width:120px;}
     .row-ctrl{
-      display:flex;align-items:center;gap:10px;
-      padding:7px 20px;background:var(--grey);
+      display:flex;align-items:center;gap:10px;padding:7px 20px;background:var(--grey);
       border-top:1px solid var(--border);
     }
     .row-cnt{font-size:11px;color:var(--muted);}
-
-    /* ═══════════════ BOTTOM SECTION (PAYMENT + SIGNATURE) ═══════════════ */
     .bottom-section{
-      display:flex; justify-content:space-between; align-items:flex-end;
-      padding:16px 20px 24px;
-      gap:20px;
+      display:flex;justify-content:space-between;align-items:flex-end;
+      padding:16px 20px 24px;gap:20px;
     }
-    .pay-section{}
     .pay-head{
-      font-size:11px;font-weight:800;letter-spacing:1.5px;
-      text-transform:uppercase;color:var(--text);
-      padding-bottom:5px;margin-bottom:6px;
-      border-bottom:2px solid var(--green);
-      display:inline-block;
+      font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+      color:var(--text);padding-bottom:5px;margin-bottom:6px;
+      border-bottom:2px solid var(--green);display:inline-block;
     }
     .pay-tbl{width:auto;border-collapse:collapse;font-size:11.5px;}
     .pay-tbl td{padding:4px 12px;border:1.5px solid var(--border);}
     .pay-tbl td.plbl{font-weight:700;background:var(--grey);white-space:nowrap;width:120px;}
     .pay-tbl td input{
-      border:none;outline:none;background:transparent;
-      font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text);
-      min-width:180px;
+      border:none;outline:none;background:transparent;font-family:'Inter',sans-serif;
+      font-size:11.5px;color:var(--text);min-width:180px;
     }
-
-    /* ═══════════════ FOOTER ═══════════════ */
-    .po-footer{position:relative;overflow:hidden;}
-
-    /* Signature col */
-    .sig-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;
-             color:var(--muted);letter-spacing:1px;margin-bottom:8px;}
+    .sig-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:1px;margin-bottom:8px;}
     .sig-row{display:inline-flex;align-items:flex-end;gap:8px;}
     .sig-area{flex:0 0 auto;}
-    .sig-img{height:76px;object-fit:contain;object-position:left bottom;
-             display:block;margin-bottom:2px;width:170px;}
+    .sig-img{height:76px;object-fit:contain;object-position:left bottom;display:block;margin-bottom:2px;width:170px;}
     .sig-line{border-bottom:1.5px solid var(--green);margin-top:2px;width:170px;}
-    .sig-line-lbl{font-size:8.5px;color:var(--muted);margin-top:3px;
-                  text-transform:uppercase;letter-spacing:.5px;}
-    .stamp-img{width:90px;height:90px;object-fit:contain;display:block;
-               flex-shrink:0;margin-bottom:-5px;margin-left:-60px;position:relative;z-index:2;}
-
-    /* Bottom strip */
+    .sig-line-lbl{font-size:8.5px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+    .stamp-img{width:90px;height:90px;object-fit:contain;display:block;flex-shrink:0;margin-bottom:-5px;margin-left:-60px;position:relative;z-index:2;}
+    .po-footer{position:relative;overflow:hidden;}
     .foot-strip{
       background:linear-gradient(90deg,var(--blue-dk),var(--green-dk));
-      display:flex;
-      justify-content:space-between;
-      align-items:center;padding:6px 20px;
-      font-size:9.5px;color:rgba(255,255,255,.75);font-weight:500;
+      display:flex;justify-content:space-between;align-items:center;
+      padding:6px 20px;font-size:9.5px;color:rgba(255,255,255,.75);font-weight:500;
     }
-
-    /* ═══════════════ TERMS & CONDITIONS PAGE ═══════════════ */
-    .tc-page{
-      width:100%; max-width:900px;
-      background:#fff; border-radius:12px; overflow:hidden;
-      box-shadow:0 8px 40px rgba(0,0,0,.14);
-      margin-top:24px;
-    }
+    .tc-page{margin-top:24px;}
     .tc-inner{padding:28px 32px 24px;}
     .tc-title{
-      font-size:13px;font-weight:800;letter-spacing:2px;
-      text-transform:uppercase;text-align:center;
-      color:var(--green-dk);
-      padding-bottom:8px;margin-bottom:16px;
+      font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+      text-align:center;color:var(--green-dk);padding-bottom:8px;margin-bottom:16px;
       border-bottom:2px solid var(--green);
     }
     .tc-item{margin-bottom:14px;}
-    .tc-item-head{
-      font-size:11.5px;font-weight:700;color:var(--green-dk);
-      margin-bottom:4px;
-    }
-    .tc-item-body{
-      font-size:11px;color:var(--text);line-height:1.7;
-    }
-
-    /* ═══════════════ PRINT ═══════════════ */
+    .tc-item-head{font-size:11.5px;font-weight:700;color:var(--green-dk);margin-bottom:4px;}
+    .tc-item-body{font-size:11px;color:var(--text);line-height:1.7;}
     @media print{
       @page{size:A4 portrait;margin:7mm 9mm;}
-      html,body{background:#fff !important;padding:0;margin:0;display:block;font-size:10px;}
-      .toolbar,.row-ctrl,.rm-btn,.no-print{display:none !important;}
-      
-      /* Make wrappers take full page height and use flex to push footer down */
-      .po-wrap{
-        max-width:100%;box-shadow:none;border-radius:0;
-        display: flex; flex-direction: column; min-height: 99vh;
-      }
-      .po-body{
-        padding:9px 13px 11px !important;
-        flex-grow: 1; /* Pushes bottom-section and footer to the bottom */
-      }
-
-      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
-      .po-meta-tbl td{padding:4px 8px !important;}
-      .sh-tbl td{padding:4px 8px !important;}
-      .item-tbl thead th{padding:5px 6px !important;}
-      .item-tbl tbody td{padding:2px 4px !important;}
-      .gt-tr td{padding:7px 10px !important;}
-      .bottom-section{padding:9px 13px 12px !important;}
-      [contenteditable]{border-bottom:none !important;background:transparent !important;}
-      .item-tbl tbody td input{background:transparent !important;}
-      .pay-tbl td input{background:transparent !important;}
-
-      /* Terms & Conditions: force new page */
-      .tc-page{
-        page-break-before:always;
-        box-shadow:none;border-radius:0;
-        margin-top:0;
-        display: flex; flex-direction: column; min-height: 99vh;
-      }
-      .tc-inner{
-        padding:18px 22px 16px;
-        flex-grow: 1; /* Pushes foot-strip to the bottom */
-      }
-      
-      .item-tbl{page-break-inside:avoid;}
-      .po-footer{page-break-inside:avoid;}
-      .pay-section{page-break-inside:avoid;}
+      html,body{background:#fff!important;padding:0;margin:0;display:block;font-size:10px;}
+      .toolbar,.row-ctrl,.rm-btn,.no-print{display:none!important;}
+      .po-wrap{max-width:100%;box-shadow:none;border-radius:0;display:flex;flex-direction:column;min-height:99vh;}
+      .po-body{padding:9px 13px 11px!important;flex-grow:1;}
+      *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+      .po-meta-tbl td,.sh-tbl td{padding:4px 8px!important;}
+      .item-tbl thead th{padding:5px 6px!important;}
+      .item-tbl tbody td{padding:2px 4px!important;}
+      .gt-tr td{padding:7px 10px!important;}
+      .bottom-section{padding:9px 13px 12px!important;}
+      [contenteditable]{border-bottom:none!important;background:transparent!important;}
+      .item-tbl tbody td input,.pay-tbl td input{background:transparent!important;}
+      .discount-input{background:transparent!important;}
+      .tc-page{page-break-before:always;box-shadow:none;border-radius:0;margin-top:0;display:flex;flex-direction:column;min-height:99vh;}
+      .tc-inner{padding:18px 22px 16px;flex-grow:1;}
+      .item-tbl,.po-footer,.pay-section{page-break-inside:avoid;}
+    }
+    @media(max-width:650px){
+      .info-strip{grid-template-columns:1fr;}
+      .info-cell,.info-cell:first-child,.info-cell:nth-child(2){border-right:0;border-bottom:1px solid var(--border);}
+      .info-logo{justify-content:flex-start;}
+      .po-body{padding:10px;}
+      .item-tbl{font-size:10px;}
+      .item-tbl thead th{font-size:8px;padding:5px 3px;}
+      .bottom-section{flex-direction:column;align-items:flex-start;}
+      .foot-strip{gap:6px;flex-wrap:wrap;}
+      .tc-inner{padding:18px;}
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════ TOOLBAR ══════════ -->
 <input type="file" id="loadJsonFile" accept=".json" style="display:none;" onchange="loadFromJson(event)">
+
 <div class="toolbar no-print" id="toolbar">
   <div class="toolbar-left">
     <span class="lbl">Currency:</span>
@@ -387,9 +249,8 @@
     <button class="btn btn-add" onclick="addRow()">＋ Add Row</button>
     <button class="btn btn-add" onclick="triggerLoad()" title="Load from JSON">📂 Load</button>
     <button class="btn btn-add" onclick="saveToJson()" title="Save to JSON">💾 Save</button>
-    <label class="lbl" style="display:flex; align-items:center; gap:4px; cursor:pointer; margin-left:10px;">
-      <input type="checkbox" id="vatCheck" checked onchange="toggleVat()">
-      Apply VAT (5%)
+    <label class="lbl" style="display:flex;align-items:center;gap:4px;cursor:pointer;margin-left:10px;">
+      <input type="checkbox" id="vatCheck" checked onchange="toggleVat()"> Apply VAT (5%)
     </label>
   </div>
   <button class="btn btn-print" onclick="window.print()">
@@ -398,19 +259,13 @@
   </button>
 </div>
 
-<!-- ══════════ INVOICE DOCUMENT ══════════ -->
 <div class="po-wrap" id="inv-doc">
-
-  <!-- ══ HEADER ══ -->
   <header class="po-header">
     <div class="top-bar"></div>
-
     <div class="info-strip">
       <div class="info-cell">
         <div class="co-name" contenteditable="true" id="coName">Reloop Recycling FZE</div>
-        <div class="co-trn">
-          <span contenteditable="true" id="coTrn">Reloop TRN – 105170462300003</span>
-        </div>
+        <div class="co-trn"><span contenteditable="true" id="coTrn">Reloop TRN – 105170462300003</span></div>
       </div>
       <div class="info-cell">
         <div class="touch-lbl" contenteditable="true" id="touchLbl">Get in touch</div>
@@ -420,88 +275,54 @@
           <span contenteditable="true" id="coAddr">Reloop Recycling FZE – RA08 TC05, JAFZA, Dubai, UAE</span>
         </div>
       </div>
-      <!-- Logo column -->
-      <div class="info-logo">
-        <img src="logo.png" alt="Reloop Recycling Logo"/>
-      </div>
+      <div class="info-logo"><img src="logo.png" alt="Reloop Recycling Logo"/></div>
     </div>
   </header>
 
-  <!-- ══ BODY ══ -->
   <main class="po-body">
-
-    <!-- 1. Invoice Meta -->
     <div class="sec-head">Tax Invoice</div>
     <table class="po-meta-tbl">
-      <tr>
-        <td class="lbl-td">Invoice No. :</td>
-        <td><input type="text" id="invNo" placeholder="e.g. RL/INV-001/4-26"/></td>
-      </tr>
-      <tr>
-        <td class="lbl-td">Invoice Date :</td>
-        <td><input type="text" id="invDate" placeholder="e.g. 21-Apr-2026"/></td>
-      </tr>
+      <tr><td class="lbl-td">Invoice No. :</td><td><input type="text" id="invNo" placeholder="e.g. RL/INV-001/4-26"/></td></tr>
+      <tr><td class="lbl-td">Invoice Date :</td><td><input type="text" id="invDate" placeholder="e.g. 21-Apr-2026"/></td></tr>
     </table>
 
-    <!-- 2. Bill To / Ship To -->
     <div class="sh-head">Bill To / Ship To</div>
     <table class="sh-tbl">
-      <tr>
-        <td class="sl">Company Name :</td>
-        <td><input type="text" id="billCoName" placeholder="Company name"/></td>
-      </tr>
-      <tr>
-        <td class="sl">TRN Number :</td>
-        <td><input type="text" id="billTrn" placeholder="Customer TRN number"/></td>
-      </tr>
-      <tr>
-        <td class="sl">Address :</td>
-        <td><textarea id="billAddr" placeholder="Full address"></textarea></td>
-      </tr>
-      <tr>
-        <td class="sl">Customer Name :</td>
-        <td><input type="text" id="billName" placeholder="Customer / Contact name"/></td>
-      </tr>
-      <tr>
-        <td class="sl">Phone :</td>
-        <td><input type="text" id="billPhone" placeholder="+xx-xxx-xxxx"/></td>
-      </tr>
-      <tr>
-        <td class="sl">Email :</td>
-        <td><input type="text" id="billEmail" placeholder="email@example.com"/></td>
-      </tr>
+      <tr><td class="sl">Company Name :</td><td><input type="text" id="billCoName" placeholder="Company name"/></td></tr>
+      <tr><td class="sl">TRN Number :</td><td><input type="text" id="billTrn" placeholder="Customer TRN number"/></td></tr>
+      <tr><td class="sl">Address :</td><td><textarea id="billAddr" placeholder="Full address"></textarea></td></tr>
+      <tr><td class="sl">Customer Name :</td><td><input type="text" id="billName" placeholder="Customer / Contact name"/></td></tr>
+      <tr><td class="sl">Phone :</td><td><input type="text" id="billPhone" placeholder="+xx-xxx-xxxx"/></td></tr>
+      <tr><td class="sl">Email :</td><td><input type="text" id="billEmail" placeholder="email@example.com"/></td></tr>
     </table>
 
-    <!-- 3. Items -->
     <table class="item-tbl" id="itemTbl">
-      <thead>
-        <tr>
-          <th style="width:34px">Sr.No</th>
-          <th class="dh">Description</th>
-          <th style="width:60px" id="th-qty">
-            <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
-              Qty <button class="rm-col-btn no-print" onclick="removeCoreColumn('qty')" title="Remove Column">✕</button>
-            </div>
-          </th>
-          <th style="width:120px" id="th-price">
-            <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
-              Unit Price (<span id="curHdr">USD</span>) <button class="rm-col-btn no-print" onclick="removeCoreColumn('price')" title="Remove Column">✕</button>
-            </div>
-          </th>
-          <th style="width:120px">Total (<span id="curHdr2">USD</span>):</th>
-          <th style="width:30px" class="no-print"></th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th style="width:34px">Sr.No</th>
+        <th class="dh">Description</th>
+        <th style="width:60px" id="th-qty"><div style="display:flex;align-items:center;justify-content:center;gap:4px;">Qty <button class="rm-col-btn no-print" onclick="removeCoreColumn('qty')" title="Remove Column">✕</button></div></th>
+        <th style="width:120px" id="th-price"><div style="display:flex;align-items:center;justify-content:center;gap:4px;">Unit Price (<span id="curHdr">USD</span>) <button class="rm-col-btn no-print" onclick="removeCoreColumn('price')" title="Remove Column">✕</button></div></th>
+        <th style="width:120px">Total (<span id="curHdr2">USD</span>):</th>
+        <th style="width:30px" class="no-print"></th>
+      </tr></thead>
       <tbody id="tbody"></tbody>
       <tfoot>
         <tr>
-          <td colspan="4" id="foot-subtotal" style="text-align:right; font-weight:700; padding:7px 12px; border:none; border-right:1px solid var(--border); font-size:12px;">Subtotal</td>
-          <td id="subTotalVal" style="font-weight:700; text-align:center; border:none; padding:7px 12px; border-bottom:1px solid var(--border);"><span class="curSymDisplay">$</span> 0.00</td>
+          <td colspan="4" id="foot-subtotal" style="text-align:right;font-weight:700;padding:7px 12px;border:none;border-right:1px solid var(--border);font-size:12px;">Subtotal</td>
+          <td id="subTotalVal" style="font-weight:700;text-align:center;border:none;padding:7px 12px;border-bottom:1px solid var(--border);"><span class="curSymDisplay">$</span> 0.00</td>
           <td class="no-print" style="border:none;"></td>
         </tr>
         <tr id="vatRow">
-          <td colspan="4" id="foot-vat" style="text-align:right; font-weight:700; padding:7px 12px; border:none; border-right:1px solid var(--border); font-size:12px;">VAT (5%)</td>
-          <td id="vatVal" style="font-weight:700; text-align:center; border:none; padding:7px 12px;"><span class="curSymDisplay">$</span> 0.00</td>
+          <td colspan="4" id="foot-vat" style="text-align:right;font-weight:700;padding:7px 12px;border:none;border-right:1px solid var(--border);font-size:12px;">VAT (5%)</td>
+          <td id="vatVal" style="font-weight:700;text-align:center;border:none;padding:7px 12px;"><span class="curSymDisplay">$</span> 0.00</td>
+          <td class="no-print" style="border:none;"></td>
+        </tr>
+        <tr class="discount-row">
+          <td colspan="4" id="foot-discount" class="discount-lbl">Discount</td>
+          <td class="discount-amt">
+            <span class="curSymDisplay">$</span>
+            <input type="number" id="discountInput" class="discount-input" min="0" step="0.01" value="0" placeholder="0.00" oninput="recalcTotal()" aria-label="Discount amount"/>
+          </td>
           <td class="no-print" style="border:none;"></td>
         </tr>
         <tr class="gt-tr">
@@ -511,513 +332,345 @@
         </tr>
       </tfoot>
     </table>
-
   </main>
 
-  <!-- ══ ROW CONTROLS ══ -->
   <div class="row-ctrl no-print">
     <button class="btn btn-add" onclick="addColumn()">＋ Add Column</button>
     <button class="btn btn-add" onclick="addRow()">＋ Add Row</button>
     <span class="row-cnt" id="rowCnt"></span>
   </div>
 
-  <!-- ══ BOTTOM SECTION (PAYMENT + SIGNATURE) ══ -->
   <div class="bottom-section">
-    <!-- Payment Details -->
     <div class="pay-section">
       <div class="pay-head">Payment Details:</div>
       <table class="pay-tbl">
-        <tr>
-          <td class="plbl">Payment terms</td>
-          <td><input type="text" id="payTerms" value="Cash / Bank Transfer"/></td>
-        </tr>
-        <tr>
-          <td class="plbl">Bank Name</td>
-          <td><input type="text" id="bankName" value="RAKBANK"/></td>
-        </tr>
-        <tr>
-          <td class="plbl">Account Name</td>
-          <td><input type="text" id="accName" value="Reloop Recycling FZE"/></td>
-        </tr>
-        <tr>
-          <td class="plbl">Account Number</td>
-          <td><input type="text" id="accNum" value="0333716508001"/></td>
-        </tr>
-        <tr>
-          <td class="plbl">IBAN</td>
-          <td><input type="text" id="ibanNum" value="AE430400000333716508001"/></td>
-        </tr>
+        <tr><td class="plbl">Payment terms</td><td><input type="text" id="payTerms" value="Cash / Bank Transfer"/></td></tr>
+        <tr><td class="plbl">Bank Name</td><td><input type="text" id="bankName" value="RAKBANK"/></td></tr>
+        <tr><td class="plbl">Account Name</td><td><input type="text" id="accName" value="Reloop Recycling FZE"/></td></tr>
+        <tr><td class="plbl">Account Number</td><td><input type="text" id="accNum" value="0333716508001"/></td></tr>
+        <tr><td class="plbl">IBAN</td><td><input type="text" id="ibanNum" value="AE430400000333716508001"/></td></tr>
       </table>
     </div>
-
-    <!-- Signature + Stamp (side by side) -->
     <div class="sig-col">
-      <p class="sig-lbl" style="text-align: left;">Authorised Signatory &amp; Stamp</p>
+      <p class="sig-lbl" style="text-align:left;">Authorised Signatory &amp; Stamp</p>
       <div class="sig-row">
-        <!-- Signature block -->
         <div class="sig-area">
           <img src="sign.png" alt="Signature" class="sig-img"/>
           <div class="sig-line"></div>
           <div class="sig-line-lbl" contenteditable="true">Authorised Signatory</div>
         </div>
-        <!-- Stamp directly beside signature -->
         <img src="seal.png" alt="Company Seal" class="stamp-img"/>
       </div>
     </div>
   </div>
-
-  <!-- ══ FOOTER ══ -->
   <footer class="po-footer">
-    <!-- Bottom strip -->
     <div class="foot-strip">
-      <span>📞 +971 543252882</span>
-      <span>🌐 www.reloopglobal.com</span>
-      <span>✉ info@reloopglobal.com</span>
+      <span>📞 +971 543252882</span><span>🌐 www.reloopglobal.com</span><span>✉ info@reloopglobal.com</span>
     </div>
   </footer>
+</div>
 
-</div><!-- /inv-doc -->
-
-
-<!-- ══════════ TERMS & CONDITIONS PAGE ══════════ -->
 <div class="tc-page" id="tcPage">
-
-  <!-- Same header as invoice -->
   <header class="po-header">
     <div class="top-bar"></div>
     <div class="info-strip">
-      <div class="info-cell">
-        <div class="co-name">Reloop Recycling FZE</div>
-        <div class="co-trn">Reloop TRN – 105170462300003</div>
-      </div>
+      <div class="info-cell"><div class="co-name">Reloop Recycling FZE</div><div class="co-trn">Reloop TRN – 105170462300003</div></div>
       <div class="info-cell">
         <div class="touch-lbl">Get in touch</div>
-        <div class="touch-body">
-          Email us at info@reloopglobal.com<br/>
-          or call us at +971 543252882<br/>
-          Reloop Recycling FZE – RA08 TC05, JAFZA, Dubai, UAE
-        </div>
+        <div class="touch-body">Email us at info@reloopglobal.com<br/>or call us at +971 543252882<br/>Reloop Recycling FZE – RA08 TC05, JAFZA, Dubai, UAE</div>
       </div>
-      <div class="info-logo">
-        <img src="logo.png" alt="Reloop Recycling Logo"/>
-      </div>
+      <div class="info-logo"><img src="logo.png" alt="Reloop Recycling Logo"/></div>
     </div>
   </header>
-
   <div class="tc-inner">
     <div class="tc-title">Terms &amp; Conditions – Reloop Recycling</div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">1 – Product Condition Disclosure</div>
-      <div class="tc-item-body">The functionality and condition of all equipment have been fully disclosed to the Buyer prior to sale. By proceeding with the purchase, the Buyer acknowledges and accepts the stated condition.</div>
-    </div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">2 – Payment Terms</div>
-      <div class="tc-item-body">Full payment must be made within 48–72 hours from the receipt of the invoice issued by Reloop Recycling. Failure to complete payment or arrange timely collection may result in order cancellation at the sole discretion of Reloop Recycling.</div>
-    </div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">3 – Order Availability &amp; Collection</div>
-      <div class="tc-item-body">Purchased goods will be ready for collection within 3 business days after receipt of full payment, allowing sufficient time for packing and processing.</div>
-    </div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">4 – Shipping, Duties &amp; Risk Transfer</div>
-      <div class="tc-item-body">The Buyer is solely responsible for all freight, insurance, customs clearance, compliance, import duties, VAT, and any other applicable taxes or charges outside the United States / United Arab Emirates.</div>
-    </div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">5 – Delays</div>
-      <div class="tc-item-body">Any delays arising due to unforeseen circumstances will be promptly communicated to the Buyer.</div>
-    </div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">6 – RMA (Return Merchandise Authorization)</div>
-      <div class="tc-item-body">The Buyer must report any discrepancies between the delivered goods and the provided inventory list within 10 days of receipt of goods to initiate an RMA request. Reloop Recycling requires 15–20 business days to review and resolve RMA claims, including verification of serial numbers and audit of the inventory. Upon validation, resolution will be provided either through a credit note or refund, as applicable.</div>
-    </div>
-
-    <div class="tc-item">
-      <div class="tc-item-head">7 – Grading Tolerance (Used Equipment)</div>
-      <div class="tc-item-body">All equipment is sold as used or as described. Due to the nature of used goods, a variance of approximately 5–10% in grading, condition, or notes may occur. Such variation is considered normal and acceptable. The Buyer acknowledges and agrees to this tolerance and shall not raise any claim, dispute, or RMA regarding such differences.</div>
-    </div>
+    <div class="tc-item"><div class="tc-item-head">1 – Product Condition Disclosure</div><div class="tc-item-body">The functionality and condition of all equipment have been fully disclosed to the Buyer prior to sale. By proceeding with the purchase, the Buyer acknowledges and accepts the stated condition.</div></div>
+    <div class="tc-item"><div class="tc-item-head">2 – Payment Terms</div><div class="tc-item-body">Full payment must be made within 48–72 hours from the receipt of the invoice issued by Reloop Recycling. Failure to complete payment or arrange timely collection may result in order cancellation at the sole discretion of Reloop Recycling.</div></div>
+    <div class="tc-item"><div class="tc-item-head">3 – Order Availability &amp; Collection</div><div class="tc-item-body">Purchased goods will be ready for collection within 3 business days after receipt of full payment, allowing sufficient time for packing and processing.</div></div>
+    <div class="tc-item"><div class="tc-item-head">4 – Shipping, Duties &amp; Risk Transfer</div><div class="tc-item-body">The Buyer is solely responsible for all freight, insurance, customs clearance, compliance, import duties, VAT, and any other applicable taxes or charges outside the United States / United Arab Emirates.</div></div>
+    <div class="tc-item"><div class="tc-item-head">5 – Delays</div><div class="tc-item-body">Any delays arising due to unforeseen circumstances will be promptly communicated to the Buyer.</div></div>
+    <div class="tc-item"><div class="tc-item-head">6 – RMA (Return Merchandise Authorization)</div><div class="tc-item-body">The Buyer must report any discrepancies between the delivered goods and the provided inventory list within 10 days of receipt of goods to initiate an RMA request. Reloop Recycling requires 15–20 business days to review and resolve RMA claims, including verification of serial numbers and audit of the inventory. Upon validation, resolution will be provided either through a credit note or refund, as applicable.</div></div>
+    <div class="tc-item"><div class="tc-item-head">7 – Grading Tolerance (Used Equipment)</div><div class="tc-item-body">All equipment is sold as used or as described. Due to the nature of used goods, a variance of approximately 5–10% in grading, condition, or notes may occur. Such variation is considered normal and acceptable. The Buyer acknowledges and agrees to this tolerance and shall not raise any claim, dispute, or RMA regarding such differences.</div></div>
   </div>
+  <div class="foot-strip"><span>📞 +971 543252882</span><span>🌐 www.reloopglobal.com</span><span>✉ info@reloopglobal.com</span></div>
+</div>
 
-  <!-- Same footer strip -->
-  <div class="foot-strip">
-    <span>📞 +971 543252882</span>
-    <span>🌐 www.reloopglobal.com</span>
-    <span>✉ info@reloopglobal.com</span>
-  </div>
-
-</div><!-- /tc-page -->
-
-
-<!-- ══════════ JAVASCRIPT ══════════ -->
 <script>
-  /* ── State ── */
-  let rowId   = 0;
+  let rowId = 0;
   let curCode = 'USD';
   let customCols = [];
-  let coreColsRemoved = { qty: false, price: false };
-
+  let coreColsRemoved = { qty:false, price:false };
   const SYM = { AED:'AED', USD:'$', EUR:'€', GBP:'£', INR:'₹' };
 
-  /* ── Init ── */
   document.addEventListener('DOMContentLoaded', () => {
-    const d  = new Date();
+    const d = new Date();
     const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     document.getElementById('invDate').value = `${d.getDate()}-${mo[d.getMonth()]}-${d.getFullYear()}`;
-    for (let i = 0; i < 8; i++) addRow();
+    for(let i=0;i<8;i++) addRow();
+    recalcTotal();
   });
 
-  /* ── Add Column ── */
-  function addColumn() {
-    const colId = 'cc' + Date.now() + Math.floor(Math.random() * 10000);
+  function addColumn(){
+    const colId = 'cc' + Date.now() + Math.floor(Math.random()*10000);
     customCols.push(colId);
-    
-    // Add to Header
     const theadTr = document.querySelector('#itemTbl thead tr');
     const thQty = document.getElementById('th-qty');
     const newTh = document.createElement('th');
     newTh.className = `custom-col-${colId}`;
-    newTh.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; gap:4px;"><div contenteditable="true" style="min-width:40px; border-bottom:1px dashed rgba(255,255,255,0.4);">Custom</div> <button class="rm-col-btn no-print" onclick="removeColumn('${colId}')" title="Remove Column">✕</button></div>`;
-    theadTr.insertBefore(newTh, thQty);
-    
-    // Add to each existing row
-    const rows = document.querySelectorAll('#tbody tr');
-    rows.forEach(tr => {
-      const tdQty = tr.querySelector('.td-qty');
-      const newTd = document.createElement('td');
-      newTd.className = `custom-col-${colId}`;
-      newTd.innerHTML = `<div class="expand-input" contenteditable="true" data-placeholder="-"></div>`;
-      tr.insertBefore(newTd, tdQty);
+    newTh.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:4px;"><div contenteditable="true" style="min-width:40px;border-bottom:1px dashed rgba(255,255,255,.4);">Custom</div><button class="rm-col-btn no-print" onclick="removeColumn('${colId}')" title="Remove Column">✕</button></div>`;
+    theadTr.insertBefore(newTh,thQty);
+    document.querySelectorAll('#tbody tr').forEach(tr=>{
+      const tdQty=tr.querySelector('.td-qty');
+      const newTd=document.createElement('td');
+      newTd.className=`custom-col-${colId}`;
+      newTd.innerHTML=`<div class="expand-input" contenteditable="true" data-placeholder="-"></div>`;
+      tr.insertBefore(newTd,tdQty);
     });
-    
     updateFooters();
   }
 
-  function removeColumn(colId) {
-    customCols = customCols.filter(id => id !== colId);
-    const elements = document.querySelectorAll(`.custom-col-${colId}`);
-    elements.forEach(el => el.remove());
+  function removeColumn(colId){
+    customCols=customCols.filter(id=>id!==colId);
+    document.querySelectorAll(`.custom-col-${colId}`).forEach(el=>el.remove());
     updateFooters();
   }
 
-  function removeCoreColumn(col) {
-    coreColsRemoved[col] = true;
-    if (col === 'qty') {
-      document.getElementById('th-qty').style.display = 'none';
-      document.querySelectorAll('.td-qty').forEach(el => el.style.display = 'none');
-    } else if (col === 'price') {
-      document.getElementById('th-price').style.display = 'none';
-      document.querySelectorAll('.td-price').forEach(el => el.style.display = 'none');
+  function removeCoreColumn(col){
+    coreColsRemoved[col]=true;
+    if(col==='qty'){
+      document.getElementById('th-qty').style.display='none';
+      document.querySelectorAll('.td-qty').forEach(el=>el.style.display='none');
+    }else if(col==='price'){
+      document.getElementById('th-price').style.display='none';
+      document.querySelectorAll('.td-price').forEach(el=>el.style.display='none');
     }
     updateFooters();
     recalcTotal();
   }
 
-  function updateFooters() {
-    let baseColspan = 4;
-    if (coreColsRemoved.qty) baseColspan--;
-    if (coreColsRemoved.price) baseColspan--;
-    const newColspan = baseColspan + customCols.length;
-    document.getElementById('foot-subtotal').colSpan = newColspan;
-    document.getElementById('foot-vat').colSpan = newColspan;
-    document.getElementById('foot-gt').colSpan = newColspan;
+  function updateFooters(){
+    let baseColspan=4;
+    if(coreColsRemoved.qty) baseColspan--;
+    if(coreColsRemoved.price) baseColspan--;
+    const newColspan=baseColspan+customCols.length;
+    ['foot-subtotal','foot-vat','foot-discount','foot-gt'].forEach(id=>{
+      document.getElementById(id).colSpan=newColspan;
+    });
   }
 
-  /* ── Add Row ── */
-  function addRow() {
+  function addRow(){
     rowId++;
-    const id = rowId;
-    const tr = document.createElement('tr');
-    tr.id = `r${id}`;
-    
-    let customTdHtml = '';
-    customCols.forEach(colId => {
-      customTdHtml += `<td class="custom-col-${colId}"><div class="expand-input" contenteditable="true" data-placeholder="-"></div></td>`;
+    const id=rowId;
+    const tr=document.createElement('tr');
+    tr.id=`r${id}`;
+    let customTdHtml='';
+    customCols.forEach(colId=>{
+      customTdHtml+=`<td class="custom-col-${colId}"><div class="expand-input" contenteditable="true" data-placeholder="-"></div></td>`;
     });
-
-    tr.innerHTML = `
-      <td class="sr" id="sr${id}">${document.querySelectorAll('#tbody tr').length + 1}</td>
+    tr.innerHTML=`
+      <td class="sr" id="sr${id}">${document.querySelectorAll('#tbody tr').length+1}</td>
       <td class="dtd"><div class="expand-input" contenteditable="true" data-placeholder="Item description" id="d${id}"></div></td>
       ${customTdHtml}
-      <td class="td-qty" style="${coreColsRemoved.qty ? 'display:none' : ''}"><input type="number" min="0" step="any" placeholder="0"    id="q${id}" class="qi" inputmode="decimal"/></td>
-      <td class="td-price" style="${coreColsRemoved.price ? 'display:none' : ''}"><input type="number" min="0" step="any" placeholder="0.00" id="rt${id}" class="ri" inputmode="decimal"/></td>
+      <td class="td-qty" style="${coreColsRemoved.qty?'display:none':''}"><input type="number" min="0" step="any" placeholder="0" id="q${id}" class="qi" inputmode="decimal"/></td>
+      <td class="td-price" style="${coreColsRemoved.price?'display:none':''}"><input type="number" min="0" step="any" placeholder="0.00" id="rt${id}" class="ri" inputmode="decimal"/></td>
       <td><input type="number" min="0" step="any" placeholder="0.00" id="a${id}" class="ai amt-inp" inputmode="decimal"/></td>
-      <td class="no-print"><button class="rm-btn" onclick="removeRow(${id})" title="Remove">✕</button></td>
-    `;
-
-    /* Wire events */
-    const qi = tr.querySelector('.qi');
-    const ri = tr.querySelector('.ri');
-    const ai = tr.querySelector('.ai');
-
-    function qrChange() {
-      const rawQ = parseFloat(qi.value) || 0;
-      const rawR = parseFloat(ri.value) || 0;
-      const q = coreColsRemoved.qty ? 1 : rawQ;
-      const r = coreColsRemoved.price ? 1 : rawR;
-      
-      if (!coreColsRemoved.qty || !coreColsRemoved.price) {
-        if (q > 0 && r > 0) {
-          ai.value = (q * r).toFixed(2);
-        } else if (rawQ === 0 && rawR === 0) {
-          ai.value = '';
-        }
+      <td class="no-print"><button class="rm-btn" onclick="removeRow(${id})" title="Remove">✕</button></td>`;
+    const qi=tr.querySelector('.qi');
+    const ri=tr.querySelector('.ri');
+    const ai=tr.querySelector('.ai');
+    function qrChange(){
+      const rawQ=parseFloat(qi.value)||0;
+      const rawR=parseFloat(ri.value)||0;
+      const q=coreColsRemoved.qty?1:rawQ;
+      const r=coreColsRemoved.price?1:rawR;
+      if(!coreColsRemoved.qty||!coreColsRemoved.price){
+        if(q>0&&r>0) ai.value=(q*r).toFixed(2);
+        else if(rawQ===0&&rawR===0) ai.value='';
       }
       recalcTotal();
     }
-
-    ai.addEventListener('input', () => recalcTotal());
-    qi.addEventListener('input', qrChange);
-    ri.addEventListener('input', qrChange);
-
+    ai.addEventListener('input',recalcTotal);
+    qi.addEventListener('input',qrChange);
+    ri.addEventListener('input',qrChange);
     document.getElementById('tbody').appendChild(tr);
     updateRowCount();
   }
 
-  /* ── Remove Row ── */
-  function removeRow(id) {
-    const rows = document.querySelectorAll('#tbody tr');
-    if (rows.length <= 1) { alert('At least one row is required.'); return; }
+  function removeRow(id){
+    const rows=document.querySelectorAll('#tbody tr');
+    if(rows.length<=1){alert('At least one row is required.');return;}
     document.getElementById(`r${id}`)?.remove();
     renumber();
     recalcTotal();
     updateRowCount();
   }
 
-  /* ── Renumber ── */
-  function renumber() {
-    document.querySelectorAll('#tbody tr').forEach((tr, i) => {
-      const srEl = tr.querySelector('[id^="sr"]');
-      if (srEl) srEl.textContent = i + 1;
+  function renumber(){
+    document.querySelectorAll('#tbody tr').forEach((tr,i)=>{
+      const srEl=tr.querySelector('[id^="sr"]');
+      if(srEl) srEl.textContent=i+1;
     });
   }
 
-  /* ── Recalc Grand Total ── */
-  function recalcTotal() {
-    let subtotal = 0;
-    document.querySelectorAll('.ai').forEach(inp => {
-      subtotal += parseFloat(inp.value) || 0;
-    });
-    
-    const vatCheck = document.getElementById('vatCheck');
-    const applyVat = vatCheck ? vatCheck.checked : true;
-    const vat = applyVat ? subtotal * 0.05 : 0;
-    const grandTotal = subtotal + vat;
-    const sym = SYM[curCode] || curCode;
-    
-    document.getElementById('subTotalVal').innerHTML = `<span class="curSymDisplay">${sym}</span> ${fmtN(subtotal)}`;
-    document.getElementById('vatVal').innerHTML = `<span class="curSymDisplay">${sym}</span> ${fmtN(vat)}`;
-    document.getElementById('gtVal').innerHTML = `<span id="curSymDisplay">${sym}</span> ${fmtN(grandTotal)}`;
-    
-    const vatRow = document.getElementById('vatRow');
-    if (vatRow) {
-      vatRow.style.display = applyVat ? '' : 'none';
-    }
+  function recalcTotal(){
+    let subtotal=0;
+    document.querySelectorAll('.ai').forEach(inp=>subtotal+=parseFloat(inp.value)||0);
+    const vatCheck=document.getElementById('vatCheck');
+    const applyVat=vatCheck?vatCheck.checked:true;
+    const vat=applyVat?subtotal*0.05:0;
+    const discountInput=document.getElementById('discountInput');
+    const enteredDiscount=discountInput?Math.max(0,parseFloat(discountInput.value)||0):0;
+    const discount=Math.min(enteredDiscount,subtotal+vat);
+    const grandTotal=Math.max(0,subtotal+vat-discount);
+    const sym=SYM[curCode]||curCode;
+
+    document.getElementById('subTotalVal').innerHTML=`<span class="curSymDisplay">${sym}</span> ${fmtN(subtotal)}`;
+    document.getElementById('vatVal').innerHTML=`<span class="curSymDisplay">${sym}</span> ${fmtN(vat)}`;
+    document.querySelector('.discount-row .curSymDisplay').textContent=sym;
+    document.getElementById('gtVal').innerHTML=`<span id="curSymDisplay">${sym}</span> ${fmtN(grandTotal)}`;
+    document.getElementById('vatRow').style.display=applyVat?'':'none';
   }
 
-  /* ── Toggle VAT ── */
-  function toggleVat() {
+  function toggleVat(){recalcTotal();}
+
+  function fmtN(n){
+    return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  }
+
+  function applyCurrency(){
+    curCode=document.getElementById('curSel').value;
+    document.querySelectorAll('#curHdr,#curHdr2').forEach(el=>el.textContent=curCode);
     recalcTotal();
   }
 
-  /* ── Format number ── */
-  function fmtN(n) {
-    return n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  function updateRowCount(){
+    const c=document.querySelectorAll('#tbody tr').length;
+    document.getElementById('rowCnt').textContent=`${c} row${c!==1?'s':''}`;
   }
 
-  /* ── Currency change ── */
-  function applyCurrency() {
-    curCode = document.getElementById('curSel').value;
-    const sym = SYM[curCode] || curCode;
-    // Update column headers
-    document.querySelectorAll('#curHdr, #curHdr2').forEach(el => el.textContent = curCode);
-    recalcTotal();
-  }
-
-  /* ── Row count label ── */
-  function updateRowCount() {
-    const c = document.querySelectorAll('#tbody tr').length;
-    document.getElementById('rowCnt').textContent = `${c} row${c!==1?'s':''}`;
-  }
-
-  /* ── Save to JSON ── */
-  function saveToJson() {
-    const data = {
-      curCode: document.getElementById('curSel').value,
-      applyVat: document.getElementById('vatCheck').checked,
-      coName: document.getElementById('coName').innerHTML,
-      coTrn: document.getElementById('coTrn').innerHTML,
-      touchLbl: document.getElementById('touchLbl').innerHTML,
-      coEmail: document.getElementById('coEmail').innerHTML,
-      coPhone: document.getElementById('coPhone').innerHTML,
-      coAddr: document.getElementById('coAddr').innerHTML,
-      invNo: document.getElementById('invNo').value,
-      invDate: document.getElementById('invDate').value,
-      billCoName: document.getElementById('billCoName').value,
-      billTrn: document.getElementById('billTrn').value,
-      billAddr: document.getElementById('billAddr').value,
-      billName: document.getElementById('billName').value,
-      billPhone: document.getElementById('billPhone').value,
-      billEmail: document.getElementById('billEmail').value,
-      coreColsRemoved: coreColsRemoved,
-      customCols: [],
-      items: [],
-      payTerms: document.getElementById('payTerms').value,
-      bankName: document.getElementById('bankName').value,
-      accName: document.getElementById('accName').value,
-      accNum: document.getElementById('accNum').value,
-      ibanNum: document.getElementById('ibanNum').value,
-      sigLineLbl: document.querySelector('.sig-line-lbl').innerHTML,
+  function saveToJson(){
+    const data={
+      curCode:document.getElementById('curSel').value,
+      applyVat:document.getElementById('vatCheck').checked,
+      discount:document.getElementById('discountInput').value,
+      coName:document.getElementById('coName').innerHTML,
+      coTrn:document.getElementById('coTrn').innerHTML,
+      touchLbl:document.getElementById('touchLbl').innerHTML,
+      coEmail:document.getElementById('coEmail').innerHTML,
+      coPhone:document.getElementById('coPhone').innerHTML,
+      coAddr:document.getElementById('coAddr').innerHTML,
+      invNo:document.getElementById('invNo').value,
+      invDate:document.getElementById('invDate').value,
+      billCoName:document.getElementById('billCoName').value,
+      billTrn:document.getElementById('billTrn').value,
+      billAddr:document.getElementById('billAddr').value,
+      billName:document.getElementById('billName').value,
+      billPhone:document.getElementById('billPhone').value,
+      billEmail:document.getElementById('billEmail').value,
+      coreColsRemoved:coreColsRemoved,
+      customCols:[],
+      items:[],
+      payTerms:document.getElementById('payTerms').value,
+      bankName:document.getElementById('bankName').value,
+      accName:document.getElementById('accName').value,
+      accNum:document.getElementById('accNum').value,
+      ibanNum:document.getElementById('ibanNum').value,
+      sigLineLbl:document.querySelector('.sig-line-lbl').innerHTML
     };
-
-    customCols.forEach(colId => {
-      const th = document.querySelector(`th.custom-col-${colId} div[contenteditable]`);
-      data.customCols.push({
-        id: colId,
-        name: th ? th.innerHTML : 'Custom'
-      });
+    customCols.forEach(colId=>{
+      const th=document.querySelector(`th.custom-col-${colId} div[contenteditable]`);
+      data.customCols.push({id:colId,name:th?th.innerHTML:'Custom'});
     });
-
-    const rows = document.querySelectorAll('#tbody tr');
-    rows.forEach(tr => {
-      const item = {
-        desc: tr.querySelector('.dtd .expand-input').innerHTML,
-        qty: tr.querySelector('.qi').value,
-        price: tr.querySelector('.ri').value,
-        customValues: {}
+    document.querySelectorAll('#tbody tr').forEach(tr=>{
+      const item={
+        desc:tr.querySelector('.dtd .expand-input').innerHTML,
+        qty:tr.querySelector('.qi').value,
+        price:tr.querySelector('.ri').value,
+        amount:tr.querySelector('.ai').value,
+        customValues:{}
       };
-      data.customCols.forEach(col => {
-        const tdDiv = tr.querySelector(`td.custom-col-${col.id} .expand-input`);
-        item.customValues[col.id] = tdDiv ? tdDiv.innerHTML : '';
+      data.customCols.forEach(col=>{
+        const tdDiv=tr.querySelector(`td.custom-col-${col.id} .expand-input`);
+        item.customValues[col.id]=tdDiv?tdDiv.innerHTML:'';
       });
       data.items.push(item);
     });
-
-    const jsonStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Tax_Invoice_${data.invNo || 'Draft'}.json`.replace(/[\\/]/g, '-');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`Tax_Invoice_${data.invNo||'Draft'}.json`.replace(/[\\/]/g,'-');
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
   }
 
-  /* ── Load from JSON ── */
-  function triggerLoad() {
-    document.getElementById('loadJsonFile').click();
-  }
+  function triggerLoad(){document.getElementById('loadJsonFile').click();}
 
-  function loadFromJson(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        const data = JSON.parse(e.target.result);
-        applyLoadedData(data);
-      } catch (err) {
-        alert('Error loading JSON file');
-        console.error(err);
-      }
-      event.target.value = '';
+  function loadFromJson(event){
+    const file=event.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(e){
+      try{applyLoadedData(JSON.parse(e.target.result));}
+      catch(err){alert('Error loading JSON file');console.error(err);}
+      event.target.value='';
     };
     reader.readAsText(file);
   }
 
-  function applyLoadedData(data) {
-    if (data.curCode) document.getElementById('curSel').value = data.curCode;
-    if (data.applyVat !== undefined) document.getElementById('vatCheck').checked = data.applyVat;
-    
-    if (data.coName !== undefined) document.getElementById('coName').innerHTML = data.coName;
-    if (data.coTrn !== undefined) document.getElementById('coTrn').innerHTML = data.coTrn;
-    if (data.touchLbl !== undefined) document.getElementById('touchLbl').innerHTML = data.touchLbl;
-    if (data.coEmail !== undefined) document.getElementById('coEmail').innerHTML = data.coEmail;
-    if (data.coPhone !== undefined) document.getElementById('coPhone').innerHTML = data.coPhone;
-    if (data.coAddr !== undefined) document.getElementById('coAddr').innerHTML = data.coAddr;
-    
-    if (data.invNo !== undefined) document.getElementById('invNo').value = data.invNo;
-    if (data.invDate !== undefined) document.getElementById('invDate').value = data.invDate;
-    
-    if (data.billCoName !== undefined) document.getElementById('billCoName').value = data.billCoName;
-    if (data.billTrn !== undefined) document.getElementById('billTrn').value = data.billTrn;
-    if (data.billAddr !== undefined) document.getElementById('billAddr').value = data.billAddr;
-    if (data.billName !== undefined) document.getElementById('billName').value = data.billName;
-    if (data.billPhone !== undefined) document.getElementById('billPhone').value = data.billPhone;
-    if (data.billEmail !== undefined) document.getElementById('billEmail').value = data.billEmail;
-    
-    if (data.payTerms !== undefined) document.getElementById('payTerms').value = data.payTerms;
-    if (data.bankName !== undefined) document.getElementById('bankName').value = data.bankName;
-    if (data.accName !== undefined) document.getElementById('accName').value = data.accName;
-    if (data.accNum !== undefined) document.getElementById('accNum').value = data.accNum;
-    if (data.ibanNum !== undefined) document.getElementById('ibanNum').value = data.ibanNum;
-    
-    if (data.sigLineLbl !== undefined) {
-      const sigLine = document.querySelector('.sig-line-lbl');
-      if (sigLine) sigLine.innerHTML = data.sigLineLbl;
-    }
+  function applyLoadedData(data){
+    if(data.curCode) document.getElementById('curSel').value=data.curCode;
+    if(data.applyVat!==undefined) document.getElementById('vatCheck').checked=data.applyVat;
+    if(data.discount!==undefined) document.getElementById('discountInput').value=data.discount;
+    ['coName','coTrn','touchLbl','coEmail','coPhone','coAddr'].forEach(id=>{
+      if(data[id]!==undefined) document.getElementById(id).innerHTML=data[id];
+    });
+    ['invNo','invDate','billCoName','billTrn','billAddr','billName','billPhone','billEmail','payTerms','bankName','accName','accNum','ibanNum'].forEach(id=>{
+      if(data[id]!==undefined) document.getElementById(id).value=data[id];
+    });
+    if(data.sigLineLbl!==undefined) document.querySelector('.sig-line-lbl').innerHTML=data.sigLineLbl;
 
-    customCols.slice().forEach(colId => removeColumn(colId));
-    
-    coreColsRemoved = data.coreColsRemoved || { qty: false, price: false };
-    document.getElementById('th-qty').style.display = coreColsRemoved.qty ? 'none' : '';
-    document.getElementById('th-price').style.display = coreColsRemoved.price ? 'none' : '';
+    customCols.slice().forEach(colId=>removeColumn(colId));
+    coreColsRemoved=data.coreColsRemoved||{qty:false,price:false};
+    document.getElementById('th-qty').style.display=coreColsRemoved.qty?'none':'';
+    document.getElementById('th-price').style.display=coreColsRemoved.price?'none':'';
+    document.getElementById('tbody').innerHTML='';
+    rowId=0;
 
-    document.getElementById('tbody').innerHTML = '';
-    rowId = 0;
-
-    if (data.customCols) {
-      data.customCols.forEach(col => {
+    const colIdMap={};
+    if(data.customCols){
+      data.customCols.forEach(col=>{
         addColumn();
-        const newColId = customCols[customCols.length - 1];
-        const th = document.querySelector(`th.custom-col-${newColId} div[contenteditable]`);
-        if (th) th.innerHTML = col.name;
-        col.newId = newColId;
+        const newColId=customCols[customCols.length-1];
+        colIdMap[col.id]=newColId;
+        const th=document.querySelector(`th.custom-col-${newColId} div[contenteditable]`);
+        if(th) th.innerHTML=col.name;
       });
     }
-
-    if (data.items && data.items.length > 0) {
-      data.items.forEach(item => {
+    if(data.items&&data.items.length){
+      data.items.forEach(item=>{
         addRow();
-        const tr = document.getElementById(`r${rowId}`);
-        if (item.desc !== undefined) tr.querySelector('.dtd .expand-input').innerHTML = item.desc;
-        if (item.qty !== undefined) {
-            const qi = tr.querySelector('.qi');
-            qi.value = item.qty;
-        }
-        if (item.price !== undefined) {
-            const ri = tr.querySelector('.ri');
-            ri.value = item.price;
-        }
-        
-        if (data.customCols && item.customValues) {
-          data.customCols.forEach(col => {
-            if (item.customValues[col.id] !== undefined) {
-              const tdDiv = tr.querySelector(`td.custom-col-${col.newId} .expand-input`);
-              if (tdDiv) tdDiv.innerHTML = item.customValues[col.id];
-            }
+        const tr=document.getElementById(`r${rowId}`);
+        if(item.desc!==undefined) tr.querySelector('.dtd .expand-input').innerHTML=item.desc;
+        if(item.qty!==undefined) tr.querySelector('.qi').value=item.qty;
+        if(item.price!==undefined) tr.querySelector('.ri').value=item.price;
+        if(item.amount!==undefined) tr.querySelector('.ai').value=item.amount;
+        else if(item.qty!==undefined||item.price!==undefined) tr.querySelector('.ri').dispatchEvent(new Event('input'));
+        if(data.customCols&&item.customValues){
+          data.customCols.forEach(col=>{
+            const newId=colIdMap[col.id];
+            const tdDiv=tr.querySelector(`td.custom-col-${newId} .expand-input`);
+            if(tdDiv&&item.customValues[col.id]!==undefined) tdDiv.innerHTML=item.customValues[col.id];
           });
         }
-        
-        // Trigger calculation for the row
-        const qi = tr.querySelector('.qi');
-        if (qi) qi.dispatchEvent(new Event('input'));
       });
-    } else {
-      for (let i = 0; i < 8; i++) addRow();
+    }else{
+      for(let i=0;i<8;i++) addRow();
     }
-
     applyCurrency();
     updateFooters();
     recalcTotal();
+    updateRowCount();
   }
 </script>
-
 </body>
 </html>
