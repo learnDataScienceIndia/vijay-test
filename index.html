@@ -1,2822 +1,1023 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Destruction Certificate</title>
-    <!-- Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap"
-        rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        :root {
-            --dark-green: #145a23;
-            --light-green: #208736;
-            --text-dark: #222222;
-            --image-border-width: 10px;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #e5e7eb;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Controls Area */
-        .controls {
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 210mm;
-        }
-
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 10px;
-            justify-content: center;
-        }
-
-        .btn {
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: opacity 0.2s;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .btn-primary {
-            background-color: var(--dark-green);
-        }
-
-        .btn-secondary {
-            background-color: #0c2b5c;
-        }
-
-        .btn-tertiary {
-            background-color: #e74c3c;
-        }
-
-        .tip-text {
-            font-size: 13px;
-            color: #555;
-            text-align: center;
-            margin: 0;
-            background: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Pages Container */
-        #pages-container {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            align-items: center;
-        }
-
-        /* Exact A4 Page Box */
-        .page {
-            background-color: white;
-            width: 210mm;
-            height: 297mm;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            padding: 8mm;
-            box-sizing: border-box;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            page-break-after: always;
-            break-after: page;
-            overflow: hidden;
-        }
-
-        /* Watermark */
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70%;
-            opacity: 0.08;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Border */
-        .certificate-border {
-            border: 1px solid var(--dark-green);
-            box-shadow: inset 0 0 0 5px white, inset 0 0 0 7px rgba(20, 90, 35, 0.8);
-            flex-grow: 1;
-            box-sizing: border-box;
-            padding: 8mm 15mm 12mm 15mm;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            z-index: 1;
-            background: transparent;
-        }
-
-        /* Alignment Guides */
-        .alignment-guide-v,
-        .alignment-guide-h {
-            position: absolute;
-            background: #3498db;
-            display: none;
-            z-index: 100;
-            pointer-events: none;
-        }
-
-        .alignment-guide-v {
-            width: 1px;
-            top: 0;
-            bottom: 0;
-        }
-
-        .alignment-guide-h {
-            height: 1px;
-            left: 0;
-            right: 0;
-        }
-
-        .alignment-tooltip {
-            position: absolute;
-            background: #3498db;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 3px 6px;
-            border-radius: 3px;
-            display: none;
-            z-index: 101;
-            pointer-events: none;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Clean Professional Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 20px;
-            position: relative;
-            border-bottom: 2px solid rgba(20, 90, 35, 0.3);
-        }
-
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, var(--dark-green), transparent, var(--dark-green));
-        }
-
-        /* Green gradient band below header */
-        .header-band {
-            background: linear-gradient(135deg, var(--dark-green) 0%, var(--light-green) 100%);
-            padding: 8px 12mm;
-            margin-left: -12mm;
-            margin-right: -12mm;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 20px;
-        }
-
-        .header-band-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        .header-band-item i {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 11px;
-        }
-
-        .header-band-divider {
-            width: 1px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .logo-center {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .logo-center img {
-            width: 100px;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-            image-rendering: pixelated;
-            filter: contrast(1.15) saturate(1.1);
-        }
-
-        .company-name-tag {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--dark-green);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .contact-info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            justify-self: end;
-        }
-
-        .contact-row {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 8px;
-            font-size: 10px;
-            color: var(--text-dark);
-            font-weight: 500;
-        }
-
-        .contact-row i {
-            color: var(--light-green);
-            width: 14px;
-            text-align: center;
-            font-size: 11px;
-        }
-
-        /* Left placeholder so logo stays centered */
-        .header-left-spacer {
-            justify-self: start;
-        }
-
-        /* Date & Title Area */
-        .middle-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            margin-top: 10px;
-            margin-bottom: 25px;
-        }
-
-        /* Title Style - Centered with lines on both sides */
-        .title-wrapper {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            gap: 15px;
-            margin-top: 0;
-        }
-
-        .title-line {
-            flex-grow: 1;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(20, 90, 35, 0.5));
-            position: relative;
-        }
-
-        .title-line:last-child {
-            background: linear-gradient(270deg, transparent, rgba(20, 90, 35, 0.5));
-        }
-
-        .title-line::after {
-            content: '';
-            position: absolute;
-            top: -2.5px;
-            width: 7px;
-            height: 7px;
-            background: var(--dark-green);
-            border-radius: 50%;
-        }
-
-        .title-line:first-child::after {
-            right: 0;
-        }
-
-        .title-line:last-child::after {
-            left: 0;
-        }
-
-        .title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 26px;
-            font-weight: 600;
-            color: var(--dark-green);
-            margin: 0;
-            letter-spacing: 2.5px;
-            line-height: 1;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        /* Unified Details Table */
-        .details-section {
-            width: 100%;
-            margin-bottom: 25px;
-        }
-
-        .details-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            border-radius: 8px;
-            overflow: hidden;
-            table-layout: fixed;
-            font-size: 13px;
-            border: 1px solid rgba(20, 90, 35, 0.3);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        }
-
-        .details-table th,
-        .details-table td {
-            padding: 9px 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(20, 90, 35, 0.15);
-            border-right: 1px solid rgba(20, 90, 35, 0.15);
-            position: relative;
-        }
-
-        .details-table tr:last-child th,
-        .details-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .details-table th:nth-child(3) {
-            border-left: 2px solid rgba(20, 90, 35, 0.1);
-        }
-
-        .details-table td:last-child {
-            border-right: none;
-        }
-
-        .details-table th {
-            width: 18%;
-            font-weight: 700;
-            color: var(--dark-green);
-            background-color: rgba(20, 90, 35, 0.04);
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-        }
-
-        .details-table td {
-            width: 32%;
-            font-weight: 500;
-            color: var(--text-dark);
-        }
-
-        .details-table tr:hover {
-            background-color: rgba(20, 90, 35, 0.015);
-        }
-
-        .add-field-row td {
-            background: none !important;
-            border-top: 1px dashed var(--dark-green) !important;
-            padding: 5px 10px;
-        }
-
-        /* Dynamic Add/Remove Fields */
-        .remove-row-btn {
-            position: absolute;
-            left: -22px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 16px;
-            height: 16px;
-            background-color: #e74c3c;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-            font-weight: bold;
-        }
-
-        .details-table tr:hover .remove-row-btn {
-            opacity: 1;
-        }
-
-        .add-row-btn {
-            background-color: transparent;
-            color: var(--light-green);
-            border: 1px dashed var(--light-green);
-            padding: 4px 10px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .add-row-btn:hover {
-            background-color: rgba(32, 135, 54, 0.1);
-        }
-
-        /* Paragraphs */
-        .content-text {
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--text-dark);
-            text-align: justify;
-            margin-bottom: 30px;
-        }
-
-        .content-text p {
-            margin: 0 0 12px 0;
-            font-weight: 500;
-        }
-
-        .highlight-red {
-            color: #d32f2f;
-            font-weight: 700;
-        }
-
-        .certify-statement {
-            text-align: justify;
-            font-weight: 500;
-            color: var(--text-dark);
-            margin-top: 20px !important;
-            font-size: 13px;
-        }
-
-        /* Image Title */
-        .image-area-title {
-            text-align: center;
-            font-family: 'Oswald', sans-serif;
-            font-size: 20px;
-            color: var(--dark-green);
-            margin-top: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .image-area-title::before,
-        .image-area-title::after {
-            content: '';
-            flex-grow: 1;
-            height: 1px;
-            background: rgba(20, 90, 35, 0.2);
-        }
-
-        /* Footer Accreditations - Pushed to Bottom of Page */
-        .footer-accreditations {
-            border-top: 1px solid #e0e0e0;
-            padding-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            background: white;
-            margin-top: auto;
-        }
-
-        .acc-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .acc-item img {
-            height: 38px;
-            object-fit: contain;
-        }
-
-        .acc-text {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .acc-text strong {
-            color: #0c2b5c;
-            font-size: 9px;
-            font-weight: 700;
-        }
-
-        .acc-text span {
-            color: #555;
-            font-size: 7px;
-            line-height: 1.2;
-        }
-
-        /* UI Helpers */
-        .page-actions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 6px;
-            z-index: 100;
-        }
-
-        .page-action-btn {
-            background: rgba(12, 43, 92, 0.9);
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 11px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .page-action-btn.delete {
-            background: rgba(231, 76, 60, 0.9);
-        }
-
-        .page-action-btn:hover {
-            opacity: 1;
-        }
-
-        /* Page move buttons */
-        .page-move-btn {
-            background: rgba(52, 73, 94, 0.9) !important;
-            padding: 6px 9px !important;
-        }
-
-        .page-move-btn:hover {
-            background: rgba(52, 73, 94, 1) !important;
-        }
-
-        /* Editables */
-        [contenteditable="true"] {
-            outline: none;
-            border-bottom: none;
-            transition: background-color 0.2s;
-            border-radius: 2px;
-        }
-
-        [contenteditable="true"]:hover {
-            background-color: rgba(20, 90, 35, 0.04);
-        }
-
-        [contenteditable="true"]:focus {
-            background-color: rgba(20, 90, 35, 0.07);
-            box-shadow: inset 0 -2px 0 var(--dark-green);
-        }
-
-        /* --- DRAGGABLE & RESIZABLE IMAGES --- */
-        .draggable-image {
-            display: inline-block;
-            cursor: move;
-            border: 1px solid transparent;
-            position: absolute;
-            z-index: 10;
-        }
-
-        .draggable-image img {
-            border: var(--image-border-width) solid var(--dark-green);
-            box-sizing: border-box;
-        }
-
-        .draggable-image.active {
-            border: 1px dashed #0c2b5c;
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .draggable-image .resizer-se,
-        .draggable-image .resizer-e,
-        .draggable-image .resizer-s {
-            width: 12px;
-            height: 12px;
-            background: #0B7C3B;
-            position: absolute;
-            display: none;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .draggable-image .resizer-se {
-            right: -6px;
-            bottom: -6px;
-            cursor: nwse-resize;
-        }
-
-        .draggable-image .resizer-e {
-            right: -6px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: ew-resize;
-        }
-
-        .draggable-image .resizer-s {
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: ns-resize;
-        }
-
-        .draggable-image.active .resizer-se,
-        .draggable-image.active .resizer-e,
-        .draggable-image.active .resizer-s {
-            display: block;
-        }
-
-        .draggable-image .remove-btn {
-            width: 22px;
-            height: 22px;
-            background: #e74c3c;
-            color: white;
-            position: absolute;
-            top: -11px;
-            right: -11px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 20px;
-            font-size: 16px;
-            cursor: pointer;
-            display: none;
-            font-weight: bold;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .draggable-image.active .remove-btn {
-            display: block;
-        }
-
-        /* ===== IMAGE EVIDENCE PAGE ===== */
-        .evidence-border {
-            padding: 5mm 8mm 8mm 8mm !important;
-        }
-
-        body.landscape-mode .evidence-border {
-            padding: 4mm 8mm 5mm 8mm !important;
-        }
-
-        .evidence-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 0;
-            flex-grow: 1;
-            width: 100%;
-            min-height: 0;
-            background: transparent;
-            border-radius: 4px;
-            padding: 3px;
-            box-sizing: border-box;
-        }
-
-        .grid-cell {
-            position: relative;
-            border: 4px solid transparent;
-            border-radius: 3px;
-            overflow: hidden;
-            background: #ffffff;
-            cursor: pointer;
-            user-select: none;
-            min-height: 0;
-            background-clip: padding-box;
-        }
-
-        .grid-cell.has-image {
-            border: 4px solid rgba(255, 140, 0, 0.14);
-            box-shadow: inset 0 0 0 1px rgba(255, 140, 0, 0.25);
-        }
-
-        .grid-cell:not(.has-image) {
-            display: none !important;
-        }
-
-        /* Canva-style draggable/resizable image wrapper */
-        .cell-img-wrap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            cursor: grab;
-            user-select: none;
-            box-sizing: border-box;
-        }
-
-        .cell-img-wrap:active {
-            cursor: grabbing;
-        }
-
-        .cell-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: fill;
-            /* stretch to fill wrap — user controls the size */
-            display: block;
-            pointer-events: none;
-            border: none !important;
-            box-shadow: none !important;
-            user-select: none;
-        }
-
-        /* Resize handles (visible on hover) */
-        .cell-handle {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border: 2px solid #208736;
-            border-radius: 2px;
-            z-index: 30;
-            display: none;
-            box-sizing: border-box;
-        }
-
-        .grid-cell.has-image:hover .cell-handle {
-            display: block;
-        }
-
-        /* Corner handles */
-        .cell-handle.nw {
-            top: -5px;
-            left: -5px;
-            cursor: nwse-resize;
-        }
-
-        .cell-handle.ne {
-            top: -5px;
-            right: -5px;
-            cursor: nesw-resize;
-        }
-
-        .cell-handle.sw {
-            bottom: -5px;
-            left: -5px;
-            cursor: nesw-resize;
-        }
-
-        .cell-handle.se {
-            bottom: -5px;
-            right: -5px;
-            cursor: nwse-resize;
-        }
-
-        /* Edge handles (mid points) */
-        .cell-handle.n {
-            top: -5px;
-            left: calc(50% - 5px);
-            cursor: ns-resize;
-        }
-
-        .cell-handle.s {
-            bottom: -5px;
-            left: calc(50% - 5px);
-            cursor: ns-resize;
-        }
-
-        .cell-handle.e {
-            right: -5px;
-            top: calc(50% - 5px);
-            cursor: ew-resize;
-        }
-
-        .cell-handle.w {
-            left: -5px;
-            top: calc(50% - 5px);
-            cursor: ew-resize;
-        }
-
-        .cell-placeholder {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            color: rgba(32, 135, 54, 0.4);
-            font-size: 10px;
-            font-weight: 600;
-            text-align: center;
-            pointer-events: none;
-            padding: 6px;
-            line-height: 1.4;
-        }
-
-        .cell-placeholder i {
-            font-size: 22px;
-            opacity: 0.55;
-        }
-
-        .grid-cell.has-image .cell-placeholder {
-            display: none;
-        }
-
-        .cell-overlay {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            display: flex;
-            gap: 3px;
-            opacity: 0;
-            transition: opacity 0.18s;
-            z-index: 20;
-        }
-
-        .grid-cell:hover .cell-overlay {
-            opacity: 1;
-        }
-
-        .cell-overlay-btn {
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 3px 6px;
-            font-size: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            backdrop-filter: blur(4px);
-            transition: background 0.15s;
-            line-height: 1;
-        }
-
-        .cell-overlay-btn:hover {
-            background: rgba(0, 0, 0, 0.85);
-        }
-
-        .cell-overlay-btn.del {
-            background: rgba(210, 40, 40, 0.85);
-        }
-
-        .cell-overlay-btn.del:hover {
-            background: rgba(210, 40, 40, 1);
-        }
-
-        .cell-zoom-hint {
-            position: absolute;
-            bottom: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.45);
-            color: white;
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .grid-cell.has-image:hover .cell-zoom-hint {
-            opacity: 1;
-        }
-
-        /* Print: hide resize handles and overlays */
-        @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-
-            .cell-handle,
-            .cell-overlay,
-            .cell-zoom-hint {
-                display: none !important;
-            }
-
-            .simple-text-area td,
-            .simple-text-area th {
-                resize: none !important;
-                overflow: visible !important;
-                border: 1px solid #000 !important;
-            }
-        }
-
-        /* ===== BLANK PAGE (no heavy fixed margin) ===== */
-        .blank-content-wrap {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            padding: 6mm 8mm;
-            border: 1px solid rgba(20, 90, 35, 0.25);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        /* ===== SIMPLE TEXT AREA (Plain Text Page) ===== */
-        .simple-text-area {
-            flex-grow: 1;
-            width: 100%;
-            min-height: 50px;
-            font-size: 14px;
-            line-height: 1.8;
-            color: var(--text-dark);
-            outline: none;
-            position: relative;
-            overflow-y: auto;
-            padding: 4px 2px;
-            box-sizing: border-box;
-        }
-
-        .simple-text-area::before {
-            content: attr(data-placeholder);
-            color: rgba(120, 120, 120, 0.55);
-            font-style: italic;
-            font-size: 13px;
-            pointer-events: none;
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
-        .simple-text-area.has-content::before {
-            display: none;
-        }
-
-        .simple-text-area table {
-            border-collapse: collapse;
-            width: auto;
-            max-width: 100%;
-            margin: 6px 0;
-            font-size: 11px;
-            table-layout: auto;
-        }
-
-        .simple-text-area td,
-        .simple-text-area th {
-            border: 1px solid #ccc;
-            padding: 3px 7px;
-            min-width: 30px;
-            vertical-align: top;
-            word-break: break-word;
-        }
-
-        .simple-text-area img {
-            max-width: 100%;
-            display: block;
-            margin: 6px 0;
-        }
-
-        /* Landscape Mode overrides */
-        body.landscape-mode .page {
-            width: 297mm;
-            height: 210mm;
-            padding: 8mm 12mm;
-        }
-
-        body.landscape-mode .certificate-border {
-            padding: 5mm 25mm 5mm 25mm;
-        }
-
-        body.landscape-mode .header {
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-        }
-
-        body.landscape-mode .contact-info div {
-            margin-bottom: 2px !important;
-        }
-
-        body.landscape-mode .middle-header {
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-
-        body.landscape-mode .title {
-            font-size: 20px;
-        }
-
-        body.landscape-mode .details-table th,
-        body.landscape-mode .details-table td {
-            padding: 4px 12px;
-            font-size: 11px;
-        }
-
-        body.landscape-mode .content-text p {
-            margin: 0 0 5px 0;
-            font-size: 11px;
-        }
-
-        body.landscape-mode .certify-statement {
-            margin-top: 10px !important;
-            font-size: 11px;
-        }
-
-        body.landscape-mode .watermark {
-            width: 40%;
-        }
-
-        body.landscape-mode .footer-accreditations {
-            margin-top: 5px;
-            transform: scale(0.85);
-            transform-origin: bottom center;
-        }
-
-        /* Print Settings */
-        @media print {
-            @page {
-                margin: 0;
-                size: A4 portrait;
-            }
-
-            body.landscape-mode @page {
-                size: A4 landscape;
-            }
-
-            body {
-                background-color: white;
-                padding: 0;
-                margin: 0;
-            }
-
-            .controls,
-            .page-actions {
-                display: none !important;
-            }
-
-            #pages-container {
-                gap: 0;
-            }
-
-            .page {
-                box-shadow: none;
-                margin: 0;
-            }
-
-            [contenteditable="true"] {
-                border-bottom: none !important;
-                box-shadow: none !important;
-                background-color: transparent !important;
-                outline: none !important;
-            }
-
-            .alignment-guide-v,
-            .alignment-guide-h,
-            .alignment-tooltip {
-                display: none !important;
-            }
-
-            .draggable-image {
-                border: none !important;
-                background: transparent !important;
-            }
-
-            .resizer-se,
-            .resizer-e,
-            .resizer-s,
-            .draggable-image .remove-btn {
-                display: none !important;
-            }
-
-            .remove-row-btn,
-            .add-row-btn {
-                display: none !important;
-            }
-
-            /* Evidence grid print styles */
-            .cell-overlay,
-            .cell-placeholder,
-            .cell-zoom-hint {
-                display: none !important;
-            }
-
-            .evidence-grid {
-                flex-grow: 1;
-            }
-
-            .grid-cell {
-                overflow: hidden;
-            }
-        }
-        /* --- Rich Text Editing Styles --- */
-        .floating-toolbar {
-            position: absolute;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            padding: 5px;
-            display: none;
-            gap: 5px;
-            z-index: 9999;
-            align-items: center;
-        }
-        .floating-toolbar.active {
-            display: flex;
-        }
-        .floating-toolbar button {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .floating-toolbar button:hover {
-            background-color: #f0f0f0;
-        }
-        .table-drag-handle {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background-color: #f8f9fa;
-            border: 1px solid #dadce0;
-            color: #5f6368;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            cursor: move;
-            border-radius: 4px;
-            z-index: 9998;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            user-select: none;
-        }
-        .table-drag-handle.active {
-            display: flex;
-        }
-        .table-resize-handle {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background-color: #1a73e8;
-            border: 1px solid white;
-            right: -7px;
-            bottom: -7px;
-            cursor: nwse-resize;
-            border-radius: 50%;
-            z-index: 9998;
-            display: none;
-        }
-        .table-resize-handle.active {
-            display: block;
-        }
-        table.selected-table {
-            outline: 2px solid #1a73e8 !important;
-            outline-offset: -1px;
-        }
-        @media print {
-            .floating-toolbar, .table-drag-handle, .table-resize-handle { display: none !important; }
-            table.selected-table { outline: none !important; }
-        }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tax Invoice – Reloop Recycling FZE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Variables ── */
+    :root{
+      --green:#0a7f3f; --green-dk:#065c2c; --green-lt:#e8f5ed;
+      --blue:#2fa4d7;  --blue-dk:#1a6e9e;  --blue-lt:#e5f4fb;
+      --grey:#f4f6f8;  --border:#c8d4dc;
+      --text:#1a2332;  --muted:#6b7a8d;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+    body{
+      font-family:'Inter',sans-serif;
+      background:#d0dae3;
+      color:var(--text);
+      display:flex; flex-direction:column; align-items:center;
+      padding:18px 12px 40px;
+      min-height:100vh;
+    }
+
+    /* ═══════════════ TOOLBAR ═══════════════ */
+    .toolbar{
+      width:100%; max-width:900px;
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:12px; gap:10px; flex-wrap:wrap;
+    }
+    .toolbar-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .lbl{font-size:11px;font-weight:700;color:var(--muted);}
+
+    select.cur-sel{
+      background:#fff; border:2px solid var(--green);
+      border-radius:7px; padding:5px 10px;
+      font-family:'Inter',sans-serif; font-size:13px;
+      font-weight:700; color:var(--green-dk); cursor:pointer; outline:none;
+    }
+    .btn{
+      display:inline-flex; align-items:center; gap:6px;
+      font-family:'Inter',sans-serif; font-size:12px; font-weight:700;
+      padding:7px 16px; border-radius:20px; cursor:pointer;
+      transition:all .18s; border:none;
+    }
+    .btn-add{background:var(--green-lt);color:var(--green-dk);border:1.5px solid var(--green);}
+    .btn-add:hover{background:var(--green);color:#fff;}
+    .btn-print{
+      background:linear-gradient(135deg,var(--green),var(--blue));
+      color:#fff; box-shadow:0 4px 16px rgba(10,127,63,.28);
+      padding:8px 20px;
+    }
+    .btn-print:hover{transform:translateY(-2px);box-shadow:0 7px 20px rgba(10,127,63,.38);}
+    .btn-print svg{width:15px;height:15px;fill:currentColor;}
+
+    /* ═══════════════ INVOICE WRAPPER ═══════════════ */
+    .po-wrap{
+      width:100%; max-width:900px;
+      background:#fff; border-radius:12px; overflow:hidden;
+      box-shadow:0 8px 40px rgba(0,0,0,.14);
+    }
+
+    /* ═══════════════ HEADER ═══════════════ */
+    .po-header{background:#fff;}
+
+    /* Thin brand accent bar at very top */
+    .top-bar{
+      height:6px;
+      background:linear-gradient(90deg, var(--green) 0%, var(--blue) 100%);
+    }
+
+    /* Info strip — 3 columns: Company | Get in touch | Logo */
+    .info-strip{
+      display:grid;
+      grid-template-columns:1fr 1fr auto;
+      align-items:center;
+      border-bottom:2px solid var(--border);
+      background:var(--grey);
+    }
+    .info-cell{padding:13px 18px;}
+    .info-cell:first-child{border-right:1.5px solid var(--border);}
+    .info-cell:nth-child(2){border-right:1.5px solid var(--border);}
+
+    /* Logo column inside info strip */
+    .info-logo{
+      padding:10px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .info-logo img{
+      width:90px;
+      height:90px;
+      object-fit:contain;
+      display:block;
+    }
+
+    /* Editable text */
+    [contenteditable]{
+      outline:none;
+      border-bottom:1px dashed transparent;
+      transition:border-color .2s;
+      display:inline-block;
+      min-width:20px;
+    }
+    [contenteditable]:hover{border-color:var(--blue);}
+    [contenteditable]:focus{
+      border-color:var(--green);
+      background:rgba(10,127,63,.04);
+      border-radius:2px;
+    }
+
+    .co-name{font-size:14px;font-weight:800;color:var(--green-dk);}
+    .co-trn {font-size:11px;color:var(--muted);margin-top:3px;font-weight:500;}
+    .touch-lbl{font-size:11.5px;font-weight:700;color:var(--blue-dk);margin-bottom:4px;}
+    .touch-body{font-size:11px;color:var(--muted);line-height:1.65;}
+
+    /* ═══════════════ BODY ═══════════════ */
+    .po-body{padding:14px 20px 16px;}
+
+    .sec-head{
+      text-align:center; font-size:11.5px; font-weight:800;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:7px 0 6px; border-bottom:1.5px solid var(--border);
+      margin-bottom:0;
+    }
+
+    /* INVOICE META */
+    .po-meta-tbl{width:100%;border-collapse:collapse;margin-bottom:11px;}
+    .po-meta-tbl td{
+      padding:5px 10px; border:1.5px solid var(--border); font-size:12px;
+    }
+    .po-meta-tbl td.lbl-td{
+      font-weight:700; width:100px; background:var(--grey); white-space:nowrap;
+    }
+    .po-meta-tbl input{
+      border:none;outline:none;background:transparent;
+      width:100%;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);
+    }
+
+    /* BILL TO / SHIP TO */
+    .sh-head{
+      font-size:10.5px;font-weight:700;letter-spacing:1.5px;
+      text-transform:uppercase;text-align:center;
+      padding:5px 0;background:var(--grey);
+      border:1.5px solid var(--border);border-bottom:none;
+    }
+    .sh-tbl{width:100%;border-collapse:collapse;margin-bottom:11px;}
+    .sh-tbl td{padding:5px 10px;border:1.5px solid var(--border);font-size:12px;vertical-align:top;}
+    .sh-tbl td.sl{font-weight:700;width:110px;background:var(--grey);white-space:nowrap;}
+    .sh-tbl input,.sh-tbl textarea{
+      border:none;outline:none;background:transparent;
+      width:100%;font-family:'Inter',sans-serif;
+      font-size:12px;color:var(--text);resize:none;
+    }
+    .sh-tbl textarea{height:40px;}
+    /* vertical divider between Bill To and Ship To columns */
+    .sh-tbl td.mid-sep{border-left:2.5px solid var(--border);}
+
+    /* ITEMS TABLE */
+    .item-tbl{width:100%;border-collapse:collapse;font-size:11.5px;}
+    .item-tbl thead tr{
+      background:linear-gradient(90deg,var(--green-dk),var(--blue-dk));
+      color:#fff;
+    }
+    .item-tbl thead th{
+      padding:7px 7px;font-size:10px;font-weight:700;
+      letter-spacing:.8px;text-transform:uppercase;
+      border:1px solid rgba(255,255,255,.2);text-align:center;white-space:nowrap;
+    }
+    .item-tbl thead th.dh{text-align:left;}
+
+    .item-tbl tbody tr{background:#fff;}
+    .item-tbl tbody tr:nth-child(even){background:#f8fbfc;}
+    .item-tbl tbody tr:hover{background:var(--green-lt);}
+    .item-tbl tbody td{
+      border:1px solid var(--border);
+      padding:3px 5px;text-align:center;vertical-align:middle;
+    }
+    .item-tbl tbody td.dtd{text-align:left;}
+    .item-tbl tbody td.sr{font-size:11px;font-weight:600;color:var(--muted);width:34px;}
+
+    .expand-input {
+      width: 100%;
+      min-height: 22px;
+      padding: 3px 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      color: var(--text);
+      outline: none;
+      text-align: center;
+      word-wrap: break-word;
+      background: transparent;
+      border: 1px solid transparent;
+      transition: background 0.2s, border-radius 0.2s;
+    }
+    td.dtd .expand-input {
+      text-align: left;
+    }
+    .expand-input:focus {
+      background: rgba(10,127,63,.06);
+      border-radius: 3px;
+    }
+    [contenteditable][data-placeholder]:empty:before {
+      content: attr(data-placeholder);
+      color: #999;
+      pointer-events: none;
+    }
+
+    .rm-col-btn {
+      background: rgba(255,255,255,0.2); border: none; cursor: pointer;
+      color: #fff; font-size: 10px; padding: 2px 5px;
+      border-radius: 3px; transition: background .15s; margin-left: 5px;
+    }
+    .rm-col-btn:hover { background: rgba(255,0,0,0.6); }
+
+    .item-tbl tbody td input{
+      width:100%;border:none;background:transparent;
+      text-align:center;font-family:'Inter',sans-serif;
+      font-size:11.5px;color:var(--text);padding:3px 4px;outline:none;
+    }
+    .item-tbl tbody td.dtd input{text-align:left;}
+    .item-tbl tbody td input:focus{
+      background:rgba(10,127,63,.06);border-radius:3px;
+    }
+
+    .amt-inp{font-weight:600;color:var(--green-dk) !important;}
+
+    /* Remove row */
+    .rm-btn{
+      background:none;border:none;cursor:pointer;
+      color:#c0392b;font-size:14px;padding:2px 5px;
+      border-radius:4px;transition:background .15s;
+    }
+    .rm-btn:hover{background:#fdecea;}
+
+    /* Grand total */
+    .gt-tr{background:linear-gradient(90deg,var(--green-dk),var(--blue-dk)) !important;}
+    .gt-tr td{padding:9px 12px !important;border-color:transparent !important;}
+    .gt-lbl{font-size:13px;font-weight:800;color:#fff;text-align:right !important;letter-spacing:.5px;}
+    .gt-val{font-size:17px;font-weight:800;color:#fff;text-align:center !important;white-space:nowrap;min-width:120px;}
+
+    /* ═══════════════ ROW CONTROLS ═══════════════ */
+    .row-ctrl{
+      display:flex;align-items:center;gap:10px;
+      padding:7px 20px;background:var(--grey);
+      border-top:1px solid var(--border);
+    }
+    .row-cnt{font-size:11px;color:var(--muted);}
+
+    /* ═══════════════ BOTTOM SECTION (PAYMENT + SIGNATURE) ═══════════════ */
+    .bottom-section{
+      display:flex; justify-content:space-between; align-items:flex-end;
+      padding:16px 20px 24px;
+      gap:20px;
+    }
+    .pay-section{}
+    .pay-head{
+      font-size:11px;font-weight:800;letter-spacing:1.5px;
+      text-transform:uppercase;color:var(--text);
+      padding-bottom:5px;margin-bottom:6px;
+      border-bottom:2px solid var(--green);
+      display:inline-block;
+    }
+    .pay-tbl{width:auto;border-collapse:collapse;font-size:11.5px;}
+    .pay-tbl td{padding:4px 12px;border:1.5px solid var(--border);}
+    .pay-tbl td.plbl{font-weight:700;background:var(--grey);white-space:nowrap;width:120px;}
+    .pay-tbl td input{
+      border:none;outline:none;background:transparent;
+      font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text);
+      min-width:180px;
+    }
+
+    /* ═══════════════ FOOTER ═══════════════ */
+    .po-footer{position:relative;overflow:hidden;}
+
+    /* Signature col */
+    .sig-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;
+             color:var(--muted);letter-spacing:1px;margin-bottom:8px;}
+    .sig-row{display:inline-flex;align-items:flex-end;gap:8px;}
+    .sig-area{flex:0 0 auto;}
+    .sig-img{height:76px;object-fit:contain;object-position:left bottom;
+             display:block;margin-bottom:2px;width:170px;}
+    .sig-line{border-bottom:1.5px solid var(--green);margin-top:2px;width:170px;}
+    .sig-line-lbl{font-size:8.5px;color:var(--muted);margin-top:3px;
+                  text-transform:uppercase;letter-spacing:.5px;}
+    .stamp-img{width:90px;height:90px;object-fit:contain;display:block;
+               flex-shrink:0;margin-bottom:-5px;margin-left:-60px;position:relative;z-index:2;}
+
+    /* Bottom strip */
+    .foot-strip{
+      background:linear-gradient(90deg,var(--blue-dk),var(--green-dk));
+      display:flex;
+      justify-content:space-between;
+      align-items:center;padding:6px 20px;
+      font-size:9.5px;color:rgba(255,255,255,.75);font-weight:500;
+    }
+
+    /* ═══════════════ TERMS & CONDITIONS PAGE ═══════════════ */
+    .tc-page{
+      width:100%; max-width:900px;
+      background:#fff; border-radius:12px; overflow:hidden;
+      box-shadow:0 8px 40px rgba(0,0,0,.14);
+      margin-top:24px;
+    }
+    .tc-inner{padding:28px 32px 24px;}
+    .tc-title{
+      font-size:13px;font-weight:800;letter-spacing:2px;
+      text-transform:uppercase;text-align:center;
+      color:var(--green-dk);
+      padding-bottom:8px;margin-bottom:16px;
+      border-bottom:2px solid var(--green);
+    }
+    .tc-item{margin-bottom:14px;}
+    .tc-item-head{
+      font-size:11.5px;font-weight:700;color:var(--green-dk);
+      margin-bottom:4px;
+    }
+    .tc-item-body{
+      font-size:11px;color:var(--text);line-height:1.7;
+    }
+
+    /* ═══════════════ PRINT ═══════════════ */
+    @media print{
+      @page{size:A4 portrait;margin:7mm 9mm;}
+      html,body{background:#fff !important;padding:0;margin:0;display:block;font-size:10px;}
+      .toolbar,.row-ctrl,.rm-btn,.no-print{display:none !important;}
+      
+      /* Make wrappers take full page height and use flex to push footer down */
+      .po-wrap{
+        max-width:100%;box-shadow:none;border-radius:0;
+        display: flex; flex-direction: column; min-height: 99vh;
+      }
+      .po-body{
+        padding:9px 13px 11px !important;
+        flex-grow: 1; /* Pushes bottom-section and footer to the bottom */
+      }
+
+      *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;}
+      .po-meta-tbl td{padding:4px 8px !important;}
+      .sh-tbl td{padding:4px 8px !important;}
+      .item-tbl thead th{padding:5px 6px !important;}
+      .item-tbl tbody td{padding:2px 4px !important;}
+      .gt-tr td{padding:7px 10px !important;}
+      .bottom-section{padding:9px 13px 12px !important;}
+      [contenteditable]{border-bottom:none !important;background:transparent !important;}
+      .item-tbl tbody td input{background:transparent !important;}
+      .pay-tbl td input{background:transparent !important;}
+
+      /* Terms & Conditions: force new page */
+      .tc-page{
+        page-break-before:always;
+        box-shadow:none;border-radius:0;
+        margin-top:0;
+        display: flex; flex-direction: column; min-height: 99vh;
+      }
+      .tc-inner{
+        padding:18px 22px 16px;
+        flex-grow: 1; /* Pushes foot-strip to the bottom */
+      }
+      
+      .item-tbl{page-break-inside:avoid;}
+      .po-footer{page-break-inside:avoid;}
+      .pay-section{page-break-inside:avoid;}
+    }
+  </style>
 </head>
-
 <body>
 
-    <div class="controls">
-        <div class="button-group">
-            <button class="btn btn-primary" onclick="window.print()">
-                <i class="fa-solid fa-file-pdf"></i> Download PDF
-            </button>
-            <button class="btn btn-secondary" onclick="addTextPage()">
-                <i class="fa-solid fa-file-lines"></i> Add Text Page
-            </button>
-            <button class="btn btn-secondary" style="background-color: #16a085;" onclick="addEvidencePage()">
-                <i class="fa-solid fa-images"></i> Add Evidence Page
-            </button>
-            <button class="btn btn-primary" style="background-color: #27ae60;" onclick="saveProject()">
-                <i class="fa-solid fa-save"></i> Save Project
-            </button>
-            <button class="btn btn-primary" style="background-color: #8e44ad;"
-                onclick="document.getElementById('projectUpload').click()">
-                <i class="fa-solid fa-upload"></i> Load Project
-            </button>
-            <select id="orientationSelect" class="btn"
-                style="background-color: #34495e; color: white; border: none; font-weight: 600; padding: 10px 15px; border-radius: 5px;"
-                onchange="changeOrientation()">
-                <option value="portrait">Portrait (A4)</option>
-                <option value="landscape">Landscape (A4)</option>
-            </select>
+<!-- ══════════ TOOLBAR ══════════ -->
+<input type="file" id="loadJsonFile" accept=".json" style="display:none;" onchange="loadFromJson(event)">
+<div class="toolbar no-print" id="toolbar">
+  <div class="toolbar-left">
+    <span class="lbl">Currency:</span>
+    <select class="cur-sel" id="curSel" onchange="applyCurrency()">
+      <option value="USD">🇺🇸 USD</option>
+      <option value="AED">🇦🇪 AED</option>
+      <option value="EUR">🇪🇺 EUR</option>
+      <option value="GBP">🇬🇧 GBP</option>
+      <option value="INR">🇮🇳 INR</option>
+    </select>
+    <button class="btn btn-add" onclick="addColumn()">＋ Add Column</button>
+    <button class="btn btn-add" onclick="addRow()">＋ Add Row</button>
+    <button class="btn btn-add" onclick="triggerLoad()" title="Load from JSON">📂 Load</button>
+    <button class="btn btn-add" onclick="saveToJson()" title="Save to JSON">💾 Save</button>
+    <label class="lbl" style="display:flex; align-items:center; gap:4px; cursor:pointer; margin-left:10px;">
+      <input type="checkbox" id="vatCheck" checked onchange="toggleVat()">
+      Apply VAT (5%)
+    </label>
+  </div>
+  <button class="btn btn-print" onclick="window.print()">
+    <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+    Print / Save as PDF
+  </button>
+</div>
 
-            <div
-                style="display: flex; align-items: center; gap: 10px; background: white; padding: 5px 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <label for="imageBorderSlider"
-                    style="font-size: 14px; font-weight: 600; color: var(--dark-green);">Image Border:</label>
-                <input type="range" id="imageBorderSlider" min="0" max="50" value="10"
-                    oninput="updateImageBorder(this.value)">
-                <span id="borderWidthDisplay" style="font-size: 14px; font-weight: 600;">10px</span>
-            </div>
+<!-- ══════════ INVOICE DOCUMENT ══════════ -->
+<div class="po-wrap" id="inv-doc">
 
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;"
-                onchange="handleImageUpload(this)">
-            <input type="file" id="projectUpload" accept=".json" style="display: none;" onchange="loadProject(this)">
+  <!-- ══ HEADER ══ -->
+  <header class="po-header">
+    <div class="top-bar"></div>
+
+    <div class="info-strip">
+      <div class="info-cell">
+        <div class="co-name" contenteditable="true" id="coName">Reloop Recycling FZE</div>
+        <div class="co-trn">
+          <span contenteditable="true" id="coTrn">Reloop TRN – 105170462300003</span>
         </div>
-        <p class="tip-text">
-            <i class="fa-solid fa-circle-info" style="color:#0B7C3B;"></i> <b>Pro Tip:</b> Use <b>Add Text Page</b> for
-            plain text, or <b>Add Evidence Page</b> for the 3×3 image grid. Click ↑↓ to reorder pages. Drag to
-            resize/move images!
-        </p>
-    </div>
-
-    <div id="pages-container">
-
-        <!-- PAGE 1: Certificate -->
-        <div class="page" id="page-1">
-            <img src="https://github.com/learnDataScienceIndia/aatera-COD/blob/main/aatera-loop-logo-2.png"
-                class="watermark" alt="">
-
-            <!-- Page 1 action buttons -->
-            <div class="page-actions">
-                <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'up')"
-                    title="Move Up">
-                    <i class="fa-solid fa-chevron-up"></i>
-                </button>
-                <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'down')"
-                    title="Move Down">
-                    <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <button class="page-action-btn" onclick="setActivePageAndUpload(this)">
-                    <i class="fa-solid fa-image"></i> Add Image
-                </button>
-            </div>
-
-            <div class="certificate-border">
-
-                <!-- Clean Professional Header: Logo Left, Contact Right -->
-                <div class="header">
-                    <!-- Left: Logo -->
-                    <div style="display: flex; align-items: center;">
-                        <img src="https://learndatascienceindia.github.io/aatera-proposal/logo%20copy.png"
-                            alt="Aatera COD"
-                            style="width: 250px; image-rendering: -webkit-optimize-contrast; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges; image-rendering: pixelated; filter: contrast(1.15) saturate(1.1);">
-                    </div>
-
-                    <!-- Right: Company Name & Contact Info -->
-                    <div class="contact-info" style="align-items: flex-start;">
-                        <div contenteditable="true"
-                            style="font-size: 14px; font-family: 'Oswald', sans-serif; font-weight: 800; color: var(--dark-green); letter-spacing: 0.5px; line-height: 1.1; margin-bottom: 2px;">
-                            Aatera Loop Battery Recycling L.L.C</div>
-
-                        <div class="contact-row">
-                            <i class="fa-solid fa-phone"></i>
-                            <span contenteditable="true">+971 54-325-2882</span>
-                        </div>
-                        <div class="contact-row">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span contenteditable="true">Plot # 598-1766 – WH 17,<br/>
-                      Universal Global DMCC Compound,<br/>
-                    DIP 1, Dubai, UAE</span>
-                        </div>
-                        <div class="contact-row">
-                            <i class="fa-solid fa-globe"></i>
-                            <span contenteditable="true">www.aatera.com</span>
-                        </div>
-                        <div class="contact-row">
-                            <i class="fa-solid fa-envelope"></i>
-                            <span contenteditable="true">info@aatera.com</span>
-                        </div>
-                    </div>
-                </div>
-
-
-                <!-- Title -->
-                <div class="middle-header">
-                    <div class="title-wrapper">
-                        <div class="title-line"></div>
-                        <h1 class="title" contenteditable="true">DESTRUCTION CERTIFICATE</h1>
-                        <div class="title-line"></div>
-                    </div>
-                </div>
-
-                <!-- Details Grid - Single Unified Table -->
-                <div class="details-section">
-                    <table class="details-table" id="details-main-table">
-                        <tbody>
-                            <tr>
-                                <th contenteditable="true">
-                                    <div class="remove-row-btn" onclick="this.closest('tr').remove()">×</div>Company
-                                    Name:
-                                </th>
-                                <td contenteditable="true" class="divider-left">NTS AMEGA GLOBAL</td>
-                                <th contenteditable="true">Waste Description:</th>
-                                <td contenteditable="true"></td>
-                            </tr>
-                            <tr>
-                                <th contenteditable="true">
-                                    <div class="remove-row-btn" onclick="this.closest('tr').remove()">×</div>Date
-                                    Received:
-                                </th>
-                                <td id="date-received" contenteditable="true" class="divider-left">27 April 2026</td>
-                                <th contenteditable="true">Weight:</th>
-                                <td contenteditable="true">102.5 kgs</td>
-                            </tr>
-                            <tr>
-                                <th contenteditable="true">
-                                    <div class="remove-row-btn" onclick="this.closest('tr').remove()">×</div>Job
-                                    Completed On:
-                                </th>
-                                <td id="job-completed" contenteditable="true" class="divider-left">30 April 2026</td>
-                                <th contenteditable="true">Total Received:</th>
-                                <td contenteditable="true">Lot</td>
-                            </tr>
-                            <tr>
-                                <th contenteditable="true">
-                                    <div class="remove-row-btn" onclick="this.closest('tr').remove()">×</div>Certificate
-                                    No:
-                                </th>
-                                <td id="cert-no" contenteditable="true" class="divider-left">ALR-004/Apr/2026</td>
-                                <th contenteditable="true">Remarks:</th>
-                                <td contenteditable="true">100% Recycled and 0 landfill</td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr class="add-field-row">
-                                <td colspan="4">
-                                    <button class="add-row-btn" onclick="addField()">+ Add Row</button>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <!-- Paragraphs -->
-                <div class="content-text">
-                    <p contenteditable="true">
-                        Aatera Loop Battery Recycling L.L.C certifies that the materials described above have been destroyed/recycled in accordance with our
-                        standard procedures and in compliance with all applicable laws, regulations, and conditions,
-                        including Federal Law No. 24 of 1999 concerning the Protection and Development of the Environment,
-                        as amended by Federal Law No. 11 of 2006, and its Implementing Rules and Regulations.
-                    </p>
-                    <p contenteditable="true">
-                       We thank you for your efforts and commitment towards fulfilling your Corporate Environmental Responsibility.
-                    </p>
-                    <p class="certify-statement" contenteditable="true">
-                        Aatera Loop Battery Recycling L.L.C further certifies that the recycling/destruction of these materials has been
-                        carried out in a manner that does not cause harm to human health or the environment,
-                        either within or outside the United Arab Emirates
-                    </p>
-                </div>
-
-
-
-                <!-- Footer Accreditations - Pushed to Bottom of Page -->
-                <div class="footer-accreditations" id="base-footer">
-                    <div class="acc-item">
-                        <img src="https://github.com/learnDataScienceIndia/signature/blob/main/WhatsApp%20Image%202026-04-10%20at%2017.43.12.jpeg?raw=true"
-                            alt="ISO 9001">
-                        <div class="acc-text">
-                            <strong contenteditable="true">ISO 9001:2015</strong>
-                            <span contenteditable="true">Quality Management</span>
-                        </div>
-                    </div>
-
-                    <div class="acc-item">
-                        <img src="https://github.com/learnDataScienceIndia/signature/blob/main/WhatsApp%20Image%202026-04-10%20at%2017.43.43.jpeg?raw=true"
-                            alt="ISO 45001">
-                        <div class="acc-text">
-                            <strong contenteditable="true">ISO 45001:2018</strong>
-                            <span contenteditable="true">Occupational Health<br>&amp; Safety Management</span>
-                        </div>
-                    </div>
-
-                    <div class="acc-item">
-                        <img src="https://github.com/learnDataScienceIndia/signature/blob/main/WhatsApp%20Image%202026-04-10%20at%2017.43.54.jpeg?raw=true"
-                            alt="ISO 27001">
-                        <div class="acc-text">
-                            <strong contenteditable="true">ISO 27001:2022</strong>
-                            <span contenteditable="true">Information Security<br>Management</span>
-                        </div>
-                    </div>
-
-                    <div class="acc-item">
-                        <img src="https://github.com/learnDataScienceIndia/signature/blob/main/WhatsApp%20Image%202026-04-10%20at%2017.43.24.jpeg?raw=true"
-                            alt="ISO 14001">
-                        <div class="acc-text" style="color:var(--light-green)">
-                            <strong contenteditable="true" style="color:var(--light-green)">ISO 14001:2015</strong>
-                            <span contenteditable="true">Environmental<br>Management</span>
-                        </div>
-                    </div>
-
-                    <div class="acc-item">
-                        <img src="https://github.com/learnDataScienceIndia/aatera-COD/blob/main/LMS-logo.png?raw=true"
-                            alt="Accreditations" style="height: 38px;">
-                    </div>
-                </div>
-
-            </div>
+      </div>
+      <div class="info-cell">
+        <div class="touch-lbl" contenteditable="true" id="touchLbl">Get in touch</div>
+        <div class="touch-body">
+          Email us at <span contenteditable="true" id="coEmail">info@reloopglobal.com</span><br/>
+          or call us at <span contenteditable="true" id="coPhone">+971 543252882</span><br/>
+          <span contenteditable="true" id="coAddr">Reloop Recycling FZE – RA08 TC05, JAFZA, Dubai, UAE</span>
         </div>
+      </div>
+      <!-- Logo column -->
+      <div class="info-logo">
+        <img src="logo.png" alt="Reloop Recycling Logo"/>
+      </div>
+    </div>
+  </header>
 
+  <!-- ══ BODY ══ -->
+  <main class="po-body">
+
+    <!-- 1. Invoice Meta -->
+    <div class="sec-head">Tax Invoice</div>
+    <table class="po-meta-tbl">
+      <tr>
+        <td class="lbl-td">Invoice No. :</td>
+        <td><input type="text" id="invNo" placeholder="e.g. RL/INV-001/4-26"/></td>
+      </tr>
+      <tr>
+        <td class="lbl-td">Invoice Date :</td>
+        <td><input type="text" id="invDate" placeholder="e.g. 21-Apr-2026"/></td>
+      </tr>
+    </table>
+
+    <!-- 2. Bill To / Ship To -->
+    <div class="sh-head">Bill To / Ship To</div>
+    <table class="sh-tbl">
+      <tr>
+        <td class="sl">Company Name :</td>
+        <td><input type="text" id="billCoName" placeholder="Company name"/></td>
+      </tr>
+      <tr>
+        <td class="sl">TRN Number :</td>
+        <td><input type="text" id="billTrn" placeholder="Customer TRN number"/></td>
+      </tr>
+      <tr>
+        <td class="sl">Address :</td>
+        <td><textarea id="billAddr" placeholder="Full address"></textarea></td>
+      </tr>
+      <tr>
+        <td class="sl">Customer Name :</td>
+        <td><input type="text" id="billName" placeholder="Customer / Contact name"/></td>
+      </tr>
+      <tr>
+        <td class="sl">Phone :</td>
+        <td><input type="text" id="billPhone" placeholder="+xx-xxx-xxxx"/></td>
+      </tr>
+      <tr>
+        <td class="sl">Email :</td>
+        <td><input type="text" id="billEmail" placeholder="email@example.com"/></td>
+      </tr>
+    </table>
+
+    <!-- 3. Items -->
+    <table class="item-tbl" id="itemTbl">
+      <thead>
+        <tr>
+          <th style="width:34px">Sr.No</th>
+          <th class="dh">Description</th>
+          <th style="width:60px" id="th-qty">
+            <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+              Qty <button class="rm-col-btn no-print" onclick="removeCoreColumn('qty')" title="Remove Column">✕</button>
+            </div>
+          </th>
+          <th style="width:120px" id="th-price">
+            <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+              Unit Price (<span id="curHdr">USD</span>) <button class="rm-col-btn no-print" onclick="removeCoreColumn('price')" title="Remove Column">✕</button>
+            </div>
+          </th>
+          <th style="width:120px">Total (<span id="curHdr2">USD</span>):</th>
+          <th style="width:30px" class="no-print"></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" id="foot-subtotal" style="text-align:right; font-weight:700; padding:7px 12px; border:none; border-right:1px solid var(--border); font-size:12px;">Subtotal</td>
+          <td id="subTotalVal" style="font-weight:700; text-align:center; border:none; padding:7px 12px; border-bottom:1px solid var(--border);"><span class="curSymDisplay">$</span> 0.00</td>
+          <td class="no-print" style="border:none;"></td>
+        </tr>
+        <tr id="vatRow">
+          <td colspan="4" id="foot-vat" style="text-align:right; font-weight:700; padding:7px 12px; border:none; border-right:1px solid var(--border); font-size:12px;">VAT (5%)</td>
+          <td id="vatVal" style="font-weight:700; text-align:center; border:none; padding:7px 12px;"><span class="curSymDisplay">$</span> 0.00</td>
+          <td class="no-print" style="border:none;"></td>
+        </tr>
+        <tr class="gt-tr">
+          <td colspan="4" id="foot-gt" class="gt-lbl">Grand Total</td>
+          <td class="gt-val" id="gtVal"><span id="curSymDisplay">$</span> 0.00</td>
+          <td class="no-print" style="background:transparent;border:none;"></td>
+        </tr>
+      </tfoot>
+    </table>
+
+  </main>
+
+  <!-- ══ ROW CONTROLS ══ -->
+  <div class="row-ctrl no-print">
+    <button class="btn btn-add" onclick="addColumn()">＋ Add Column</button>
+    <button class="btn btn-add" onclick="addRow()">＋ Add Row</button>
+    <span class="row-cnt" id="rowCnt"></span>
+  </div>
+
+  <!-- ══ BOTTOM SECTION (PAYMENT + SIGNATURE) ══ -->
+  <div class="bottom-section">
+    <!-- Payment Details -->
+    <div class="pay-section">
+      <div class="pay-head">Payment Details:</div>
+      <table class="pay-tbl">
+        <tr>
+          <td class="plbl">Payment terms</td>
+          <td><input type="text" id="payTerms" value="Cash / Bank Transfer"/></td>
+        </tr>
+        <tr>
+          <td class="plbl">Bank Name</td>
+          <td><input type="text" id="bankName" value="RAKBANK"/></td>
+        </tr>
+        <tr>
+          <td class="plbl">Account Name</td>
+          <td><input type="text" id="accName" value="Reloop Recycling FZE"/></td>
+        </tr>
+        <tr>
+          <td class="plbl">Account Number</td>
+          <td><input type="text" id="accNum" value="0333716508001"/></td>
+        </tr>
+        <tr>
+          <td class="plbl">IBAN</td>
+          <td><input type="text" id="ibanNum" value="AE430400000333716508001"/></td>
+        </tr>
+      </table>
     </div>
 
-    <!-- Rich Text & Table Toolbars -->
-    <div id="textToolbar" class="floating-toolbar">
-        <button onclick="document.execCommand('bold', false, null)" title="Bold"><i class="fa-solid fa-bold"></i></button>
-        <button onclick="document.execCommand('italic', false, null)" title="Italic"><i class="fa-solid fa-italic"></i></button>
-        <button onclick="document.execCommand('underline', false, null)" title="Underline"><i class="fa-solid fa-underline"></i></button>
-        <button onclick="document.execCommand('insertUnorderedList', false, null)" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
-        <button onclick="document.execCommand('insertOrderedList', false, null)" title="Number List"><i class="fa-solid fa-list-ol"></i></button>
-        <button onclick="document.execCommand('justifyLeft', false, null)" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
-        <button onclick="document.execCommand('justifyCenter', false, null)" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+    <!-- Signature + Stamp (side by side) -->
+    <div class="sig-col">
+      <p class="sig-lbl" style="text-align: left;">Authorised Signatory &amp; Stamp</p>
+      <div class="sig-row">
+        <!-- Signature block -->
+        <div class="sig-area">
+          <img src="sign.png" alt="Signature" class="sig-img"/>
+          <div class="sig-line"></div>
+          <div class="sig-line-lbl" contenteditable="true">Authorised Signatory</div>
+        </div>
+        <!-- Stamp directly beside signature -->
+        <img src="seal.png" alt="Company Seal" class="stamp-img"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="po-footer">
+    <!-- Bottom strip -->
+    <div class="foot-strip">
+      <span>📞 +971 543252882</span>
+      <span>🌐 www.reloopglobal.com</span>
+      <span>✉ info@reloopglobal.com</span>
+    </div>
+  </footer>
+
+</div><!-- /inv-doc -->
+
+
+<!-- ══════════ TERMS & CONDITIONS PAGE ══════════ -->
+<div class="tc-page" id="tcPage">
+
+  <!-- Same header as invoice -->
+  <header class="po-header">
+    <div class="top-bar"></div>
+    <div class="info-strip">
+      <div class="info-cell">
+        <div class="co-name">Reloop Recycling FZE</div>
+        <div class="co-trn">Reloop TRN – 105170462300003</div>
+      </div>
+      <div class="info-cell">
+        <div class="touch-lbl">Get in touch</div>
+        <div class="touch-body">
+          Email us at info@reloopglobal.com<br/>
+          or call us at +971 543252882<br/>
+          Reloop Recycling FZE – RA08 TC05, JAFZA, Dubai, UAE
+        </div>
+      </div>
+      <div class="info-logo">
+        <img src="logo.png" alt="Reloop Recycling Logo"/>
+      </div>
+    </div>
+  </header>
+
+  <div class="tc-inner">
+    <div class="tc-title">Terms &amp; Conditions – Reloop Recycling</div>
+
+    <div class="tc-item">
+      <div class="tc-item-head">1 – Product Condition Disclosure</div>
+      <div class="tc-item-body">The functionality and condition of all equipment have been fully disclosed to the Buyer prior to sale. By proceeding with the purchase, the Buyer acknowledges and accepts the stated condition.</div>
     </div>
 
-    <div id="tableToolbar" class="floating-toolbar">
-        <button onclick="window.tableAction('addRowAbove')" title="Add Row Above"><i class="fa-solid fa-arrow-up"></i></button>
-        <button onclick="window.tableAction('addRowBelow')" title="Add Row Below"><i class="fa-solid fa-arrow-down"></i></button>
-        <button onclick="window.tableAction('addColLeft')" title="Add Col Left"><i class="fa-solid fa-arrow-left"></i></button>
-        <button onclick="window.tableAction('addColRight')" title="Add Col Right"><i class="fa-solid fa-arrow-right"></i></button>
-        <button onclick="window.tableAction('deleteRow')" title="Delete Row" style="color:#d32f2f;"><i class="fa-solid fa-minus"></i> Row</button>
-        <button onclick="window.tableAction('deleteCol')" title="Delete Col" style="color:#d32f2f;"><i class="fa-solid fa-minus"></i> Col</button>
-        <button onclick="window.tableAction('deleteTable')" title="Delete Table" style="color:#d32f2f;"><i class="fa-solid fa-trash"></i></button>
-        <div style="width:1px;height:16px;background:#ddd;margin:0 4px;"></div>
-        <button onclick="window.tableAction('toggleBorder')" title="Toggle Borders"><i class="fa-solid fa-border-all"></i></button>
+    <div class="tc-item">
+      <div class="tc-item-head">2 – Payment Terms</div>
+      <div class="tc-item-body">Full payment must be made within 48–72 hours from the receipt of the invoice issued by Reloop Recycling. Failure to complete payment or arrange timely collection may result in order cancellation at the sole discretion of Reloop Recycling.</div>
     </div>
 
-    <div id="tableDragHandle" class="table-drag-handle" title="Drag to move table"><i class="fa-solid fa-arrows-up-down-left-right"></i></div>
-    <div id="tableResizeHandle" class="table-resize-handle" title="Drag to resize table"></div>
+    <div class="tc-item">
+      <div class="tc-item-head">3 – Order Availability &amp; Collection</div>
+      <div class="tc-item-body">Purchased goods will be ready for collection within 3 business days after receipt of full payment, allowing sufficient time for packing and processing.</div>
+    </div>
 
-    <script>
-        // =====================================================
-        // CANVA-STYLE CELL IMAGE DRAG + RESIZE
-        // Each .cell-img-wrap handles its own drag/resize
-        // via initCellWrap(). No global pan state needed.
-        // =====================================================
+    <div class="tc-item">
+      <div class="tc-item-head">4 – Shipping, Duties &amp; Risk Transfer</div>
+      <div class="tc-item-body">The Buyer is solely responsible for all freight, insurance, customs clearance, compliance, import duties, VAT, and any other applicable taxes or charges outside the United States / United Arab Emirates.</div>
+    </div>
 
-        /**
-         * Attach Canva-style drag-to-move and corner/edge drag-to-resize
-         * to a .cell-img-wrap element inside a .grid-cell.
-         * Uses position (top/left/width/height) — no CSS transforms.
-         * @param {HTMLElement} cell - The parent .grid-cell.
-         * @param {HTMLElement} wrap - The .cell-img-wrap inside the cell.
-         */
-        function initCellWrap(cell, wrap) {
-            if (wrap._wrapInitialized) return;
-            wrap._wrapInitialized = true;
+    <div class="tc-item">
+      <div class="tc-item-head">5 – Delays</div>
+      <div class="tc-item-body">Any delays arising due to unforeseen circumstances will be promptly communicated to the Buyer.</div>
+    </div>
 
-            let startX, startY, startL, startT, startW, startH, action;
+    <div class="tc-item">
+      <div class="tc-item-head">6 – RMA (Return Merchandise Authorization)</div>
+      <div class="tc-item-body">The Buyer must report any discrepancies between the delivered goods and the provided inventory list within 10 days of receipt of goods to initiate an RMA request. Reloop Recycling requires 15–20 business days to review and resolve RMA claims, including verification of serial numbers and audit of the inventory. Upon validation, resolution will be provided either through a credit note or refund, as applicable.</div>
+    </div>
 
-            function onMove(e) {
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-                const minSize = 20;
+    <div class="tc-item">
+      <div class="tc-item-head">7 – Grading Tolerance (Used Equipment)</div>
+      <div class="tc-item-body">All equipment is sold as used or as described. Due to the nature of used goods, a variance of approximately 5–10% in grading, condition, or notes may occur. Such variation is considered normal and acceptable. The Buyer acknowledges and agrees to this tolerance and shall not raise any claim, dispute, or RMA regarding such differences.</div>
+    </div>
+  </div>
 
-                if (action === 'move') {
-                    wrap.style.left = (startL + dx) + 'px';
-                    wrap.style.top = (startT + dy) + 'px';
-                } else {
-                    let nl = startL, nt = startT, nw = startW, nh = startH;
-                    // East (right edge)
-                    if (action === 'e' || action === 'ne' || action === 'se') {
-                        nw = Math.max(minSize, startW + dx);
-                    }
-                    // West (left edge)
-                    if (action === 'w' || action === 'nw' || action === 'sw') {
-                        nw = Math.max(minSize, startW - dx);
-                        nl = startL + (startW - nw);
-                    }
-                    // South (bottom edge)
-                    if (action === 's' || action === 'sw' || action === 'se') {
-                        nh = Math.max(minSize, startH + dy);
-                    }
-                    // North (top edge)
-                    if (action === 'n' || action === 'nw' || action === 'ne') {
-                        nh = Math.max(minSize, startH - dy);
-                        nt = startT + (startH - nh);
-                    }
-                    wrap.style.left = nl + 'px';
-                    wrap.style.top = nt + 'px';
-                    wrap.style.width = nw + 'px';
-                    wrap.style.height = nh + 'px';
-                }
-            }
+  <!-- Same footer strip -->
+  <div class="foot-strip">
+    <span>📞 +971 543252882</span>
+    <span>🌐 www.reloopglobal.com</span>
+    <span>✉ info@reloopglobal.com</span>
+  </div>
 
-            function onUp() {
-                document.removeEventListener('mousemove', onMove);
-                document.removeEventListener('mouseup', onUp);
-                if (action === 'move') wrap.style.cursor = 'grab';
-                action = null;
-            }
+</div><!-- /tc-page -->
 
-            function startAction(e, type) {
-                e.preventDefault();
-                e.stopPropagation();
-                action = type;
-                startX = e.clientX;
-                startY = e.clientY;
-                startL = parseInt(wrap.style.left) || 0;
-                startT = parseInt(wrap.style.top) || 0;
-                startW = wrap.offsetWidth;
-                startH = wrap.offsetHeight;
-                if (type === 'move') wrap.style.cursor = 'grabbing';
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            }
 
-            // Body drag = move
-            wrap.addEventListener('mousedown', function (e) {
-                if (e.target.classList.contains('cell-handle')) return;
-                startAction(e, 'move');
-            });
+<!-- ══════════ JAVASCRIPT ══════════ -->
+<script>
+  /* ── State ── */
+  let rowId   = 0;
+  let curCode = 'USD';
+  let customCols = [];
+  let coreColsRemoved = { qty: false, price: false };
 
-            // Corner/edge handle drag = resize
-            wrap.querySelectorAll('.cell-handle').forEach(function (h) {
-                const dir = Array.from(h.classList).find(c => c !== 'cell-handle');
-                h.addEventListener('mousedown', function (e) { startAction(e, dir); });
-            });
+  const SYM = { AED:'AED', USD:'$', EUR:'€', GBP:'£', INR:'₹' };
+
+  /* ── Init ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const d  = new Date();
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('invDate').value = `${d.getDate()}-${mo[d.getMonth()]}-${d.getFullYear()}`;
+    for (let i = 0; i < 8; i++) addRow();
+  });
+
+  /* ── Add Column ── */
+  function addColumn() {
+    const colId = 'cc' + Date.now() + Math.floor(Math.random() * 10000);
+    customCols.push(colId);
+    
+    // Add to Header
+    const theadTr = document.querySelector('#itemTbl thead tr');
+    const thQty = document.getElementById('th-qty');
+    const newTh = document.createElement('th');
+    newTh.className = `custom-col-${colId}`;
+    newTh.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; gap:4px;"><div contenteditable="true" style="min-width:40px; border-bottom:1px dashed rgba(255,255,255,0.4);">Custom</div> <button class="rm-col-btn no-print" onclick="removeColumn('${colId}')" title="Remove Column">✕</button></div>`;
+    theadTr.insertBefore(newTh, thQty);
+    
+    // Add to each existing row
+    const rows = document.querySelectorAll('#tbody tr');
+    rows.forEach(tr => {
+      const tdQty = tr.querySelector('.td-qty');
+      const newTd = document.createElement('td');
+      newTd.className = `custom-col-${colId}`;
+      newTd.innerHTML = `<div class="expand-input" contenteditable="true" data-placeholder="-"></div>`;
+      tr.insertBefore(newTd, tdQty);
+    });
+    
+    updateFooters();
+  }
+
+  function removeColumn(colId) {
+    customCols = customCols.filter(id => id !== colId);
+    const elements = document.querySelectorAll(`.custom-col-${colId}`);
+    elements.forEach(el => el.remove());
+    updateFooters();
+  }
+
+  function removeCoreColumn(col) {
+    coreColsRemoved[col] = true;
+    if (col === 'qty') {
+      document.getElementById('th-qty').style.display = 'none';
+      document.querySelectorAll('.td-qty').forEach(el => el.style.display = 'none');
+    } else if (col === 'price') {
+      document.getElementById('th-price').style.display = 'none';
+      document.querySelectorAll('.td-price').forEach(el => el.style.display = 'none');
+    }
+    updateFooters();
+    recalcTotal();
+  }
+
+  function updateFooters() {
+    let baseColspan = 4;
+    if (coreColsRemoved.qty) baseColspan--;
+    if (coreColsRemoved.price) baseColspan--;
+    const newColspan = baseColspan + customCols.length;
+    document.getElementById('foot-subtotal').colSpan = newColspan;
+    document.getElementById('foot-vat').colSpan = newColspan;
+    document.getElementById('foot-gt').colSpan = newColspan;
+  }
+
+  /* ── Add Row ── */
+  function addRow() {
+    rowId++;
+    const id = rowId;
+    const tr = document.createElement('tr');
+    tr.id = `r${id}`;
+    
+    let customTdHtml = '';
+    customCols.forEach(colId => {
+      customTdHtml += `<td class="custom-col-${colId}"><div class="expand-input" contenteditable="true" data-placeholder="-"></div></td>`;
+    });
+
+    tr.innerHTML = `
+      <td class="sr" id="sr${id}">${document.querySelectorAll('#tbody tr').length + 1}</td>
+      <td class="dtd"><div class="expand-input" contenteditable="true" data-placeholder="Item description" id="d${id}"></div></td>
+      ${customTdHtml}
+      <td class="td-qty" style="${coreColsRemoved.qty ? 'display:none' : ''}"><input type="number" min="0" step="any" placeholder="0"    id="q${id}" class="qi" inputmode="decimal"/></td>
+      <td class="td-price" style="${coreColsRemoved.price ? 'display:none' : ''}"><input type="number" min="0" step="any" placeholder="0.00" id="rt${id}" class="ri" inputmode="decimal"/></td>
+      <td><input type="number" min="0" step="any" placeholder="0.00" id="a${id}" class="ai amt-inp" inputmode="decimal"/></td>
+      <td class="no-print"><button class="rm-btn" onclick="removeRow(${id})" title="Remove">✕</button></td>
+    `;
+
+    /* Wire events */
+    const qi = tr.querySelector('.qi');
+    const ri = tr.querySelector('.ri');
+    const ai = tr.querySelector('.ai');
+
+    function qrChange() {
+      const rawQ = parseFloat(qi.value) || 0;
+      const rawR = parseFloat(ri.value) || 0;
+      const q = coreColsRemoved.qty ? 1 : rawQ;
+      const r = coreColsRemoved.price ? 1 : rawR;
+      
+      if (!coreColsRemoved.qty || !coreColsRemoved.price) {
+        if (q > 0 && r > 0) {
+          ai.value = (q * r).toFixed(2);
+        } else if (rawQ === 0 && rawR === 0) {
+          ai.value = '';
         }
+      }
+      recalcTotal();
+    }
 
-        // =====================================================
-        // UTILITY FUNCTIONS
-        // =====================================================
+    ai.addEventListener('input', () => recalcTotal());
+    qi.addEventListener('input', qrChange);
+    ri.addEventListener('input', qrChange);
 
-        /** Get the inner HTML of the base footer element for cloning into new pages. */
-        function getFooterHTML() {
-            const baseFooter = document.getElementById('base-footer');
-            return baseFooter ? baseFooter.innerHTML : '';
+    document.getElementById('tbody').appendChild(tr);
+    updateRowCount();
+  }
+
+  /* ── Remove Row ── */
+  function removeRow(id) {
+    const rows = document.querySelectorAll('#tbody tr');
+    if (rows.length <= 1) { alert('At least one row is required.'); return; }
+    document.getElementById(`r${id}`)?.remove();
+    renumber();
+    recalcTotal();
+    updateRowCount();
+  }
+
+  /* ── Renumber ── */
+  function renumber() {
+    document.querySelectorAll('#tbody tr').forEach((tr, i) => {
+      const srEl = tr.querySelector('[id^="sr"]');
+      if (srEl) srEl.textContent = i + 1;
+    });
+  }
+
+  /* ── Recalc Grand Total ── */
+  function recalcTotal() {
+    let subtotal = 0;
+    document.querySelectorAll('.ai').forEach(inp => {
+      subtotal += parseFloat(inp.value) || 0;
+    });
+    
+    const vatCheck = document.getElementById('vatCheck');
+    const applyVat = vatCheck ? vatCheck.checked : true;
+    const vat = applyVat ? subtotal * 0.05 : 0;
+    const grandTotal = subtotal + vat;
+    const sym = SYM[curCode] || curCode;
+    
+    document.getElementById('subTotalVal').innerHTML = `<span class="curSymDisplay">${sym}</span> ${fmtN(subtotal)}`;
+    document.getElementById('vatVal').innerHTML = `<span class="curSymDisplay">${sym}</span> ${fmtN(vat)}`;
+    document.getElementById('gtVal').innerHTML = `<span id="curSymDisplay">${sym}</span> ${fmtN(grandTotal)}`;
+    
+    const vatRow = document.getElementById('vatRow');
+    if (vatRow) {
+      vatRow.style.display = applyVat ? '' : 'none';
+    }
+  }
+
+  /* ── Toggle VAT ── */
+  function toggleVat() {
+    recalcTotal();
+  }
+
+  /* ── Format number ── */
+  function fmtN(n) {
+    return n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  /* ── Currency change ── */
+  function applyCurrency() {
+    curCode = document.getElementById('curSel').value;
+    const sym = SYM[curCode] || curCode;
+    // Update column headers
+    document.querySelectorAll('#curHdr, #curHdr2').forEach(el => el.textContent = curCode);
+    recalcTotal();
+  }
+
+  /* ── Row count label ── */
+  function updateRowCount() {
+    const c = document.querySelectorAll('#tbody tr').length;
+    document.getElementById('rowCnt').textContent = `${c} row${c!==1?'s':''}`;
+  }
+
+  /* ── Save to JSON ── */
+  function saveToJson() {
+    const data = {
+      curCode: document.getElementById('curSel').value,
+      applyVat: document.getElementById('vatCheck').checked,
+      coName: document.getElementById('coName').innerHTML,
+      coTrn: document.getElementById('coTrn').innerHTML,
+      touchLbl: document.getElementById('touchLbl').innerHTML,
+      coEmail: document.getElementById('coEmail').innerHTML,
+      coPhone: document.getElementById('coPhone').innerHTML,
+      coAddr: document.getElementById('coAddr').innerHTML,
+      invNo: document.getElementById('invNo').value,
+      invDate: document.getElementById('invDate').value,
+      billCoName: document.getElementById('billCoName').value,
+      billTrn: document.getElementById('billTrn').value,
+      billAddr: document.getElementById('billAddr').value,
+      billName: document.getElementById('billName').value,
+      billPhone: document.getElementById('billPhone').value,
+      billEmail: document.getElementById('billEmail').value,
+      coreColsRemoved: coreColsRemoved,
+      customCols: [],
+      items: [],
+      payTerms: document.getElementById('payTerms').value,
+      bankName: document.getElementById('bankName').value,
+      accName: document.getElementById('accName').value,
+      accNum: document.getElementById('accNum').value,
+      ibanNum: document.getElementById('ibanNum').value,
+      sigLineLbl: document.querySelector('.sig-line-lbl').innerHTML,
+    };
+
+    customCols.forEach(colId => {
+      const th = document.querySelector(`th.custom-col-${colId} div[contenteditable]`);
+      data.customCols.push({
+        id: colId,
+        name: th ? th.innerHTML : 'Custom'
+      });
+    });
+
+    const rows = document.querySelectorAll('#tbody tr');
+    rows.forEach(tr => {
+      const item = {
+        desc: tr.querySelector('.dtd .expand-input').innerHTML,
+        qty: tr.querySelector('.qi').value,
+        price: tr.querySelector('.ri').value,
+        customValues: {}
+      };
+      data.customCols.forEach(col => {
+        const tdDiv = tr.querySelector(`td.custom-col-${col.id} .expand-input`);
+        item.customValues[col.id] = tdDiv ? tdDiv.innerHTML : '';
+      });
+      data.items.push(item);
+    });
+
+    const jsonStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Tax_Invoice_${data.invNo || 'Draft'}.json`.replace(/[\\/]/g, '-');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /* ── Load from JSON ── */
+  function triggerLoad() {
+    document.getElementById('loadJsonFile').click();
+  }
+
+  function loadFromJson(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        applyLoadedData(data);
+      } catch (err) {
+        alert('Error loading JSON file');
+        console.error(err);
+      }
+      event.target.value = '';
+    };
+    reader.readAsText(file);
+  }
+
+  function applyLoadedData(data) {
+    if (data.curCode) document.getElementById('curSel').value = data.curCode;
+    if (data.applyVat !== undefined) document.getElementById('vatCheck').checked = data.applyVat;
+    
+    if (data.coName !== undefined) document.getElementById('coName').innerHTML = data.coName;
+    if (data.coTrn !== undefined) document.getElementById('coTrn').innerHTML = data.coTrn;
+    if (data.touchLbl !== undefined) document.getElementById('touchLbl').innerHTML = data.touchLbl;
+    if (data.coEmail !== undefined) document.getElementById('coEmail').innerHTML = data.coEmail;
+    if (data.coPhone !== undefined) document.getElementById('coPhone').innerHTML = data.coPhone;
+    if (data.coAddr !== undefined) document.getElementById('coAddr').innerHTML = data.coAddr;
+    
+    if (data.invNo !== undefined) document.getElementById('invNo').value = data.invNo;
+    if (data.invDate !== undefined) document.getElementById('invDate').value = data.invDate;
+    
+    if (data.billCoName !== undefined) document.getElementById('billCoName').value = data.billCoName;
+    if (data.billTrn !== undefined) document.getElementById('billTrn').value = data.billTrn;
+    if (data.billAddr !== undefined) document.getElementById('billAddr').value = data.billAddr;
+    if (data.billName !== undefined) document.getElementById('billName').value = data.billName;
+    if (data.billPhone !== undefined) document.getElementById('billPhone').value = data.billPhone;
+    if (data.billEmail !== undefined) document.getElementById('billEmail').value = data.billEmail;
+    
+    if (data.payTerms !== undefined) document.getElementById('payTerms').value = data.payTerms;
+    if (data.bankName !== undefined) document.getElementById('bankName').value = data.bankName;
+    if (data.accName !== undefined) document.getElementById('accName').value = data.accName;
+    if (data.accNum !== undefined) document.getElementById('accNum').value = data.accNum;
+    if (data.ibanNum !== undefined) document.getElementById('ibanNum').value = data.ibanNum;
+    
+    if (data.sigLineLbl !== undefined) {
+      const sigLine = document.querySelector('.sig-line-lbl');
+      if (sigLine) sigLine.innerHTML = data.sigLineLbl;
+    }
+
+    customCols.slice().forEach(colId => removeColumn(colId));
+    
+    coreColsRemoved = data.coreColsRemoved || { qty: false, price: false };
+    document.getElementById('th-qty').style.display = coreColsRemoved.qty ? 'none' : '';
+    document.getElementById('th-price').style.display = coreColsRemoved.price ? 'none' : '';
+
+    document.getElementById('tbody').innerHTML = '';
+    rowId = 0;
+
+    if (data.customCols) {
+      data.customCols.forEach(col => {
+        addColumn();
+        const newColId = customCols[customCols.length - 1];
+        const th = document.querySelector(`th.custom-col-${newColId} div[contenteditable]`);
+        if (th) th.innerHTML = col.name;
+        col.newId = newColId;
+      });
+    }
+
+    if (data.items && data.items.length > 0) {
+      data.items.forEach(item => {
+        addRow();
+        const tr = document.getElementById(`r${rowId}`);
+        if (item.desc !== undefined) tr.querySelector('.dtd .expand-input').innerHTML = item.desc;
+        if (item.qty !== undefined) {
+            const qi = tr.querySelector('.qi');
+            qi.value = item.qty;
         }
-
-        /** Get or create the alignment guide elements inside a certificate-border. */
-        function getOrCreateGuides(borderContainer) {
-            let guideV = borderContainer.querySelector('.alignment-guide-v');
-            if (!guideV) {
-                guideV = document.createElement('div');
-                guideV.className = 'alignment-guide-v';
-                borderContainer.appendChild(guideV);
-            }
-            let guideH = borderContainer.querySelector('.alignment-guide-h');
-            if (!guideH) {
-                guideH = document.createElement('div');
-                guideH.className = 'alignment-guide-h';
-                borderContainer.appendChild(guideH);
-            }
-            let tooltip = borderContainer.querySelector('.alignment-tooltip');
-            if (!tooltip) {
-                tooltip = document.createElement('div');
-                tooltip.className = 'alignment-tooltip';
-                borderContainer.appendChild(tooltip);
-            }
-            return { guideV, guideH, tooltip };
-        }
-
-        // =====================================================
-        // PAGE MANAGEMENT
-        // =====================================================
-
-        /**
-         * Add a simple text page with a contenteditable area for plain text only.
-         */
-        function addTextPage() {
-            const container = document.getElementById('pages-container');
-            const footerHTML = getFooterHTML();
-
-            const newPage = document.createElement('div');
-            newPage.className = 'page';
-                    newPage.innerHTML = `
-                <div class="page-actions" style="top: 10px; right: 10px;">
-                    <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'up')" title="Move Up">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'down')" title="Move Down">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <button class="page-action-btn delete" onclick="this.closest('.page').remove()">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-               <div class="certificate-border" style="padding: 20mm; flex-grow: 1; background: white;">
-                    <div class="simple-text-area rich-content-area" contenteditable="true"
-                         data-placeholder="Click here to start typing, or paste an Excel table (Ctrl+V)..."
-                         spellcheck="false" style="outline: none;"></div>
-                    <div class="footer-accreditations" style="margin-top: auto; border-top: 1px solid #ccc;">
-                        ${footerHTML}
-                    </div>
-                </div>
-            `;
-            container.appendChild(newPage);
-
-            const textArea = newPage.querySelector('.simple-text-area');
-            initTextArea(textArea);
-            
-            setTimeout(() => { if(window.setupTablesInContainer) window.setupTablesInContainer(textArea); }, 100);
-
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        /**
-         * Add an Image Evidence Page with a professional 3×3 grid.
-         * Page title: DESTRUCTION EVIDENCE, with footer.
-         */
-        function addEvidencePage() {
-            const container = document.getElementById('pages-container');
-            const footerHTML = getFooterHTML();
-
-            const newPage = document.createElement('div');
-            newPage.className = 'page';
-            newPage.innerHTML = `
-                <div class="page-actions">
-                    <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'up')" title="Move Up">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button class="page-action-btn page-move-btn" onclick="movePage(this.closest('.page'), 'down')" title="Move Down">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <button class="page-action-btn delete" onclick="this.closest('.page').remove()">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="page-action-btn add-grid-btn" onclick="addGridImageToPage(this)">
-                        <i class="fa-solid fa-image"></i> Add Image
-                    </button>
-                </div>
-                <div class="certificate-border evidence-border">
-                    <div class="image-area-title" contenteditable="true" style="margin-bottom: 8px;">DESTRUCTION EVIDENCE</div>
-                    <div class="evidence-grid"></div>
-                    <div class="footer-accreditations" style="margin-top: 8px;">
-                        ${footerHTML}
-                    </div>
-                </div>
-            `;
-            container.appendChild(newPage);
-
-            // Build the 3×3 grid
-            const gridEl = newPage.querySelector('.evidence-grid');
-            createImageGrid(gridEl);
-
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-
-        /**
-         * Add an image to the next available empty cell in the grid.
-         */
-        function addGridImageToPage(btn) {
-            const page = btn.closest('.page');
-            if (!page) return;
-            const grid = page.querySelector('.evidence-grid');
-            if (!grid) return;
-            const emptyCell = grid.querySelector('.grid-cell:not(.has-image)');
-            if (emptyCell) {
-                const fi = emptyCell.querySelector('input[type="file"]');
-                if (fi) fi.click();
-            } else {
-                alert("This grid is full (maximum 9 images). Please add a new Evidence Page.");
-            }
-        }
-
-        /**
-         * Populate a grid element with 9 image cells (3 columns × 3 rows).
-         * @param {HTMLElement} gridEl - The .evidence-grid container element.
-         */
-        function createImageGrid(gridEl) {
-            gridEl.innerHTML = '';
-            for (let i = 0; i < 9; i++) {
-                gridEl.appendChild(createImageCell(i));
-            }
-        }
-
-        /**
-         * Create a single image cell with full interaction support:
-         * click to upload, double-click to replace, scroll to zoom,
-         * drag to pan, paste image, delete button.
-         * @param {number} index - Cell index (0–8).
-         */
-        function createImageCell(index) {
-            const cell = document.createElement('div');
-            cell.className = 'grid-cell';
-            cell.dataset.cellIndex = index;
-
-            // Placeholder (shown when no image)
-            const placeholder = document.createElement('div');
-            placeholder.className = 'cell-placeholder';
-            placeholder.innerHTML = `<i class="fa-solid fa-image"></i><span>Click or paste<br>to add image</span>`;
-            cell.appendChild(placeholder);
-
-            // Hover overlay: Replace + Delete (only when has-image)
-            const overlay = document.createElement('div');
-            overlay.className = 'cell-overlay';
-            overlay.innerHTML = `
-                <button class="cell-overlay-btn" onclick="replaceCellImage(this)" title="Replace">
-                    <i class="fa-solid fa-arrows-rotate"></i>
-                </button>
-                <button class="cell-overlay-btn del" onclick="clearCell(this)" title="Remove">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>`;
-            cell.appendChild(overlay);
-
-            // Hint label
-            const hint = document.createElement('div');
-            hint.className = 'cell-zoom-hint';
-            hint.textContent = 'Drag to move · Drag corners/edges to resize';
-            cell.appendChild(hint);
-
-            // Hidden file input
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.style.display = 'none';
-            fileInput.addEventListener('change', function () {
-                if (fileInput.files && fileInput.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) { setCellImage(cell, e.target.result); };
-                    reader.readAsDataURL(fileInput.files[0]);
-                }
-                fileInput.value = '';
-            });
-            cell.appendChild(fileInput);
-
-            initGridCell(cell);
-            return cell;
-        }
-
-        /**
-         * Attach all interaction event handlers to a grid cell.
-         * Uses a flag to prevent double-initialization.
-         * @param {HTMLElement} cell - The .grid-cell element.
-         */
-        function initGridCell(cell) {
-            if (cell._gridInitialized) return;
-            cell._gridInitialized = true;
-            cell.setAttribute('tabindex', '0');
-
-            // Click on empty cell → open file picker
-            cell.addEventListener('click', function (e) {
-                if (e.target.closest('.cell-overlay')) return;
-                if (e.target.closest('.cell-img-wrap')) return; // image present
-                if (!cell.classList.contains('has-image')) {
-                    const fi = cell.querySelector('input[type="file"]');
-                    if (fi) fi.click();
-                }
-            });
-
-            // Double-click → replace image (open picker)
-            cell.addEventListener('dblclick', function (e) {
-                if (e.target.closest('.cell-overlay')) return;
-                const fi = cell.querySelector('input[type="file"]');
-                if (fi) fi.click();
-            });
-
-            // Paste image into focused cell
-            cell.addEventListener('paste', function (e) {
-                const items = e.clipboardData ? e.clipboardData.items : [];
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') !== -1) {
-                        e.preventDefault();
-                        const blob = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = function (ev) { setCellImage(cell, ev.target.result); };
-                        reader.readAsDataURL(blob);
-                        return;
-                    }
-                }
-            });
-        }
-
-        /**
-         * Set an image source in a grid cell and update its state.
-         * @param {HTMLElement} cell - Target grid cell.
-         * @param {string} src - Image data URL.
-         */
-        /**
-         * Set an image in a grid cell.
-         * Creates or updates a .cell-img-wrap with Canva-style handles.
-         */
-        function setCellImage(cell, src) {
-            // Remove any old img-wrap
-            let wrap = cell.querySelector('.cell-img-wrap');
-            if (wrap) wrap.remove();
-
-            // Build new wrap
-            wrap = document.createElement('div');
-            wrap.className = 'cell-img-wrap';
-            // Start at full cell size
-            wrap.style.cssText = 'left:0;top:0;width:100%;height:100%;';
-
-            // Image
-            const img = document.createElement('img');
-            img.src = src;
-            img.alt = '';
-            wrap.appendChild(img);
-
-            // 8 resize handles: 4 corners + 4 edges
-            ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].forEach(function (dir) {
-                const h = document.createElement('div');
-                h.className = 'cell-handle ' + dir;
-                wrap.appendChild(h);
-            });
-
-            // Insert before overlay so overlay stays on top
-            const overlay = cell.querySelector('.cell-overlay');
-            cell.insertBefore(wrap, overlay);
-
-            cell.classList.add('has-image');
-            initCellWrap(cell, wrap);
-        }
-
-        /**
-         * Clear the image from a grid cell.
-         */
-        function clearCell(btn) {
-            const cell = btn.closest('.grid-cell');
-            if (!cell) return;
-            const wrap = cell.querySelector('.cell-img-wrap');
-            if (wrap) wrap.remove();
-            cell.classList.remove('has-image');
-            cell.style.cursor = 'pointer';
-        }
-
-        /**
-         * Trigger the file picker to replace the image in a grid cell.
-         * @param {HTMLButtonElement} btn - The replace button inside the cell overlay.
-         */
-        function replaceCellImage(btn) {
-            const cell = btn.closest('.grid-cell');
-            if (!cell) return;
-            const fi = cell.querySelector('input[type="file"]');
-            if (fi) fi.click();
-        }
-
-        // =====================================================
-        // SIMPLE TEXT AREA (PLAIN TEXT PAGES)
-        // =====================================================
-
-        /**
-         * Initialize a text area to accept rich text (tables/images) pasting.
-         * @param {HTMLElement} area - The .simple-text-area element.
-         */
-        function initTextArea(area) {
-            area.addEventListener('paste', function (e) {
-                handleRichPaste(e, area);
-            });
-            area.addEventListener('input', function () {
-                const isEmpty = !area.innerHTML.trim() || area.innerHTML.trim() === '<br>';
-                area.classList.toggle('has-content', !isEmpty);
-            });
-        }
-
-        /**
-         * Handle paste events in text areas.
-         * Priority: image → HTML (Excel/Word/Sheets) → plain text (browser default).
-         * @param {ClipboardEvent} e
-         * @param {HTMLElement} container - The contenteditable container.
-         */
-        function handleRichPaste(e, container) {
-            const cd = e.clipboardData;
-            if (!cd) return;
-            const types = cd.types ? Array.from(cd.types) : [];
-
-            if (types.indexOf('text/html') !== -1) {
-                e.preventDefault();
-                let html = cd.getData('text/html');
-                
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                
-                const tables = doc.querySelectorAll('table');
-                tables.forEach(table => {
-                    table.removeAttribute('style');
-                    table.removeAttribute('class');
-                    table.removeAttribute('bgcolor');
-                    table.style.borderCollapse = 'collapse';
-                    table.style.width = '100%';
-                    table.style.margin = '10px 0';
-                    table.style.tableLayout = 'fixed';
-                    table.style.position = 'relative'; 
-                    
-                    const cells = table.querySelectorAll('td, th');
-                    cells.forEach(cell => {
-                        cell.removeAttribute('style');
-                        cell.removeAttribute('class');
-                        cell.removeAttribute('bgcolor');
-                        cell.style.border = '1px solid #ccc';
-                        cell.style.padding = '8px';
-                        cell.style.verticalAlign = 'top';
-                        cell.style.backgroundColor = 'white';
-                        cell.style.color = '#000';
-                        cell.style.minWidth = '30px';
-                        
-                        const ps = cell.querySelectorAll('*');
-                        ps.forEach(p => {
-                            p.removeAttribute('style');
-                            p.removeAttribute('class');
-                            p.removeAttribute('color');
-                            p.removeAttribute('face');
-                            p.removeAttribute('bgcolor');
-                        });
-                    });
-                });
-                
-                const cleanHTML = doc.body.innerHTML;
-                document.execCommand('insertHTML', false, cleanHTML);
-                container.classList.add('has-content');
-                
-                setTimeout(() => { if(window.setupTablesInContainer) window.setupTablesInContainer(container); }, 50);
-                return;
-            }
-
-            for (let i = 0; i < cd.items.length; i++) {
-                if (cd.items[i].type.indexOf('image') !== -1) {
-                    e.preventDefault();
-                    const blob = cd.items[i].getAsFile();
-                    const reader = new FileReader();
-                    reader.onload = function (ev) {
-                        const imgEl = document.createElement('img');
-                        imgEl.src = ev.target.result;
-                        imgEl.style.cssText = 'max-width:100%;display:block;margin:8px 0;';
-                        imgEl.contentEditable = 'false';
-                        insertAtCursor(container, imgEl);
-                        container.classList.add('has-content');
-                    };
-                    reader.readAsDataURL(blob);
-                    return;
-                }
-            }
-        }
-
-        /**
-         * Insert a DOM node at the current cursor position in a contenteditable.
-         * Falls back to appending if no selection exists inside the container.
-         * @param {HTMLElement} container - Contenteditable container.
-         * @param {Node} node - DOM node to insert.
-         */
-        function insertAtCursor(container, node) {
-            const sel = window.getSelection();
-            if (sel && sel.rangeCount > 0) {
-                const range = sel.getRangeAt(0);
-                if (container.contains(range.commonAncestorContainer)) {
-                    range.deleteContents();
-                    range.insertNode(node);
-                    range.collapse(false);
-                    return;
-                }
-            }
-            container.appendChild(node);
-        }
-
-        // =====================================================
-        // PAGE REORDERING
-        // =====================================================
-
-        /**
-         * Move a page up or down in the pages container.
-         * @param {HTMLElement} pageEl - The .page element to move.
-         * @param {'up'|'down'} direction - Direction to move.
-         */
-        function movePage(pageEl, direction) {
-            const container = document.getElementById('pages-container');
-            if (!pageEl || !container) return;
-            if (direction === 'up') {
-                const prev = pageEl.previousElementSibling;
-                if (prev) container.insertBefore(pageEl, prev);
-            } else {
-                const next = pageEl.nextElementSibling;
-                if (next) container.insertBefore(next, pageEl);
-            }
-        }
-
-        // =====================================================
-        // ADD FIELD LOGIC (single unified details table)
-        // =====================================================
-        function addField() {
-            const tbody = document.querySelector('#details-main-table tbody');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <th contenteditable="true"><div class="remove-row-btn" onclick="this.closest('tr').remove()" title="Remove row">×</div>Label:</th>
-                <td contenteditable="true" class="divider-left">Value</td>
-                <th contenteditable="true">Label:</th>
-                <td contenteditable="true">Value</td>
-            `;
-            tbody.appendChild(row);
-        }
-
-        // =====================================================
-        // DRAGGABLE IMAGE UPLOAD
-        // =====================================================
-        let currentTargetPage = null;
-        let zIndexCounter = 10;
-
-        function setActivePageAndUpload(btn) {
-            currentTargetPage = btn.closest('.page');
-            document.getElementById('imageUpload').click();
-        }
-
-        function handleImageUpload(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) { addImageToPage(e.target.result); };
-                reader.readAsDataURL(input.files[0]);
-            }
-            input.value = '';
-        }
-
-        /**
-         * Global paste handler — routes to the appropriate handler based on context:
-         * - Grid cells: handled by their own cell paste listener
-         * - Rich content areas: handled by initRichArea paste listener
-         * - Other contenteditable: browser default (text paste)
-         * - Elsewhere: add pasted image as a draggable image
-         */
-        document.addEventListener('paste', function (e) {
-            // Let grid cells handle their own paste
-            if (e.target.closest && e.target.closest('.grid-cell')) return;
-            // Let rich content areas handle their own paste
-            if (e.target.closest && e.target.closest('.rich-content-area')) return;
-            // Let native contenteditable fields handle text paste
-            if (document.activeElement && document.activeElement.isContentEditable) return;
-
-            // Fallback: paste image as draggable
-            if (e.clipboardData) {
-                const items = e.clipboardData.items;
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') !== -1) {
-                        e.preventDefault();
-                        const blob = items[i].getAsFile();
-                        const reader = new FileReader();
-                        reader.onload = function (ev) { addImageToPage(ev.target.result); };
-                        reader.readAsDataURL(blob);
-                        return;
-                    }
-                }
-            }
-        });
-
-        function addImageToPage(imgSrc) {
-            let targetPage = currentTargetPage;
-            if (!targetPage) {
-                const pages = document.querySelectorAll('.page');
-                targetPage = pages[pages.length - 1];
-            }
-
-            const borderContainer = targetPage.querySelector('.certificate-border');
-
-            const container = document.createElement('div');
-            container.className = 'draggable-image active';
-            container.style.top = '150px';
-            container.style.left = '50px';
-            container.style.zIndex = zIndexCounter++;
-
-            const img = document.createElement('img');
-            img.src = imgSrc;
-            img.style.width = '250px';
-            img.style.height = 'auto';
-            img.style.display = 'block';
-            img.style.pointerEvents = 'none';
-
-            const resizerSE = document.createElement('div');
-            resizerSE.className = 'resizer-se';
-            const resizerE = document.createElement('div');
-            resizerE.className = 'resizer-e';
-            const resizerS = document.createElement('div');
-            resizerS.className = 'resizer-s';
-
-            const removeBtn = document.createElement('div');
-            removeBtn.className = 'remove-btn';
-            removeBtn.innerHTML = '&times;';
-            removeBtn.onclick = function (e) {
-                e.stopPropagation();
-                container.remove();
-            };
-
-            container.appendChild(img);
-            container.appendChild(resizerSE);
-            container.appendChild(resizerE);
-            container.appendChild(resizerS);
-            container.appendChild(removeBtn);
-            borderContainer.appendChild(container);
-
-            makeDraggable(container, borderContainer);
-            makeResizable(container, img, resizerSE, resizerE, resizerS);
-
-            // Deselect others
-            document.querySelectorAll('.draggable-image').forEach(el => {
-                if (el !== container) el.classList.remove('active');
-            });
-
-            currentTargetPage = null;
-        }
-
-        // Click outside to deselect draggable images
-        document.addEventListener('mousedown', function (e) {
-            if (!e.target.closest('.draggable-image') &&
-                !e.target.closest('.controls') &&
-                !e.target.closest('.page-actions')) {
-                document.querySelectorAll('.draggable-image').forEach(el => el.classList.remove('active'));
-            }
-        });
-
-        // =====================================================
-        // DRAG LOGIC (draggable images)
-        // =====================================================
-        function makeDraggable(element, boundary) {
-            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            element.onmousedown = dragMouseDown;
-
-            function dragMouseDown(e) {
-                if (e.target.className.includes('resizer') || e.target.className === 'remove-btn') return;
-                e.preventDefault();
-
-                document.querySelectorAll('.draggable-image').forEach(el => el.classList.remove('active'));
-                element.classList.add('active');
-                element.style.zIndex = zIndexCounter++;
-
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-                document.onmouseup = closeDragElement;
-                document.onmousemove = elementDrag;
-            }
-
-            function elementDrag(e) {
-                e.preventDefault();
-                pos1 = pos3 - e.clientX;
-                pos2 = pos4 - e.clientY;
-                pos3 = e.clientX;
-                pos4 = e.clientY;
-
-                let newTop = element.offsetTop - pos2;
-                let newLeft = element.offsetLeft - pos1;
-
-                // Alignment Snapping
-                const threshold = 5;
-                const { guideV, guideH, tooltip } = getOrCreateGuides(boundary);
-                guideV.style.display = 'none';
-                guideH.style.display = 'none';
-                tooltip.style.display = 'none';
-
-                const others = Array.from(boundary.querySelectorAll('.draggable-image')).filter(el => el !== element);
-
-                for (let other of others) {
-                    const oL = other.offsetLeft, oT = other.offsetTop;
-                    const oR = oL + other.offsetWidth, oB = oT + other.offsetHeight;
-
-                    if (Math.abs(newLeft - oL) < threshold) {
-                        newLeft = oL;
-                        guideV.style.display = 'block';
-                        guideV.style.left = newLeft + 'px';
-                    } else if (Math.abs(newLeft - oR) < threshold) {
-                        newLeft = oR;
-                        guideV.style.display = 'block';
-                        guideV.style.left = newLeft + 'px';
-                    }
-
-                    if (Math.abs(newTop - oT) < threshold) {
-                        newTop = oT;
-                        guideH.style.display = 'block';
-                        guideH.style.top = newTop + 'px';
-                    } else if (Math.abs(newTop - oB) < threshold) {
-                        newTop = oB;
-                        guideH.style.display = 'block';
-                        guideH.style.top = newTop + 'px';
-                    }
-                }
-
-                element.style.top = newTop + "px";
-                element.style.left = newLeft + "px";
-            }
-
-            function closeDragElement() {
-                document.onmouseup = null;
-                document.onmousemove = null;
-                const { guideV, guideH, tooltip } = getOrCreateGuides(boundary);
-                guideV.style.display = 'none';
-                guideH.style.display = 'none';
-                tooltip.style.display = 'none';
-            }
-        }
-
-        // =====================================================
-        // RESIZE LOGIC (draggable images)
-        // =====================================================
-        function makeResizable(element, img, resizerSE, resizerE, resizerS) {
-            let originalWidth = 0, originalHeight = 0;
-            let originalMouseX = 0, originalMouseY = 0;
-            let resizeType = '';
-
-            function initResize(e, type) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                element.classList.add('active');
-                originalWidth = parseFloat(getComputedStyle(img, null).getPropertyValue('width').replace('px', ''));
-                originalHeight = parseFloat(getComputedStyle(img, null).getPropertyValue('height').replace('px', ''));
-                originalMouseX = e.pageX;
-                originalMouseY = e.pageY;
-                resizeType = type;
-
-                img.style.width = originalWidth + 'px';
-                img.style.height = originalHeight + 'px';
-
-                document.addEventListener('mousemove', resize);
-                document.addEventListener('mouseup', stopResize);
-            }
-
-            if (resizerSE) resizerSE.addEventListener('mousedown', function (e) { initResize(e, 'se'); });
-            if (resizerE) resizerE.addEventListener('mousedown', function (e) { initResize(e, 'e'); });
-            if (resizerS) resizerS.addEventListener('mousedown', function (e) { initResize(e, 's'); });
-
-            function resize(e) {
-                const boundary = element.closest('.certificate-border');
-                const others = Array.from(boundary.querySelectorAll('.draggable-image')).filter(el => el !== element);
-                const { tooltip } = getOrCreateGuides(boundary);
-                tooltip.style.display = 'none';
-                const threshold = 5;
-
-                let width = originalWidth;
-                let height = originalHeight;
-
-                if (resizeType === 'e') {
-                    width = originalWidth + (e.pageX - originalMouseX);
-                } else if (resizeType === 's') {
-                    height = originalHeight + (e.pageY - originalMouseY);
-                } else if (resizeType === 'se') {
-                    const widthDelta = e.pageX - originalMouseX;
-                    const scale = (originalWidth + widthDelta) / originalWidth;
-                    width = originalWidth * scale;
-                    height = originalHeight * scale;
-                }
-
-                let snapped = false;
-                let snapText = '';
-
-                for (let other of others) {
-                    const otherW = parseFloat(getComputedStyle(other.querySelector('img')).width);
-                    const otherH = parseFloat(getComputedStyle(other.querySelector('img')).height);
-
-                    if ((resizeType === 'e' || resizeType === 'se') && Math.abs(width - otherW) < threshold) {
-                        width = otherW;
-                        if (resizeType === 'se') height = originalHeight * (width / originalWidth);
-                        snapped = true;
-                        snapText = 'Width Aligned';
-                    }
-                    if ((resizeType === 's' || resizeType === 'se') && Math.abs(height - otherH) < threshold) {
-                        height = otherH;
-                        if (resizeType === 'se') width = originalWidth * (height / originalHeight);
-                        snapped = true;
-                        snapText = 'Height Aligned';
-                    }
-                }
-
-                if (width > 20 && height > 20) {
-                    img.style.width = width + 'px';
-                    img.style.height = height + 'px';
-                }
-
-                if (snapped) {
-                    tooltip.style.display = 'block';
-                    tooltip.innerHTML = snapText;
-                    tooltip.style.top = (element.offsetTop - 25) + 'px';
-                    tooltip.style.left = element.offsetLeft + 'px';
-                    element.style.borderColor = '#3498db';
-                } else {
-                    element.style.borderColor = '';
-                }
-            }
-
-            function stopResize() {
-                document.removeEventListener('mousemove', resize);
-                document.removeEventListener('mouseup', stopResize);
-                const boundary = element.closest('.certificate-border');
-                const { tooltip } = getOrCreateGuides(boundary);
-                tooltip.style.display = 'none';
-                element.style.borderColor = '';
-            }
-        }
-
-        // =====================================================
-        // SAVE PROJECT
-        // =====================================================
-        function saveProject() {
-            const pagesContainer = document.getElementById('pages-container');
-            // Remove active selection markers before saving
-            document.querySelectorAll('.draggable-image').forEach(el => el.classList.remove('active'));
-
-            const orientation = document.getElementById('orientationSelect').value;
-
-            const projectData = {
-                pagesHTML: pagesContainer.innerHTML,
-                orientation: orientation
-            };
-
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData));
-            const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-
-            // Use Certificate No as filename if available
-            let fileName = "certificate_project";
-            const thElements = document.querySelectorAll('.details-table th');
-            for (let th of thElements) {
-                const text = th.textContent || "";
-                if (text.toLowerCase().includes('certificate') && text.toLowerCase().includes('no')) {
-                    const td = th.nextElementSibling;
-                    if (td && td.tagName.toLowerCase() === 'td') {
-                        let certVal = (td.textContent || "").trim();
-                        certVal = certVal.replace(/[\/\\?%*:|"<>]/g, '-');
-                        if (certVal) fileName = certVal;
-                    }
-                    break;
-                }
-            }
-
-            a.setAttribute("download", fileName + ".json");
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        }
-
-        // =====================================================
-        // LOAD PROJECT
-        // =====================================================
-        function loadProject(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    try {
-                        const projectData = JSON.parse(e.target.result);
-                        if (projectData && projectData.pagesHTML) {
-                            document.getElementById('pages-container').innerHTML = projectData.pagesHTML;
-
-                            if (projectData.orientation) {
-                                document.getElementById('orientationSelect').value = projectData.orientation;
-                                changeOrientation();
-                            }
-
-                            // Remove watermark and add 'Add Image' button to Evidence Pages in older projects
-                            document.querySelectorAll('.page').forEach(page => {
-                                if (page.querySelector('.evidence-grid')) {
-                                    // Remove watermark from evidence page
-                                    const wm = page.querySelector('.watermark');
-                                    if (wm) wm.remove();
-                                    
-                                    if (!page.querySelector('.add-grid-btn')) {
-                                        const actions = page.querySelector('.page-actions');
-                                        if (actions) {
-                                            const btn = document.createElement('button');
-                                            btn.className = 'page-action-btn add-grid-btn';
-                                            btn.innerHTML = '<i class="fa-solid fa-image"></i> Add Image';
-                                            btn.onclick = function() { addGridImageToPage(this); };
-                                            actions.appendChild(btn);
-                                        }
-                                    }
-                                }
-                            });
-
-                            // Re-initialize draggable images
-                            document.querySelectorAll('.draggable-image').forEach(cont => {
-                                const img = cont.querySelector('img');
-
-                                // Upgrade old project format
-                                if (cont.querySelector('.resizer')) {
-                                    cont.querySelector('.resizer').className = 'resizer-se';
-                                }
-
-                                let rSE = cont.querySelector('.resizer-se');
-                                let rE = cont.querySelector('.resizer-e');
-                                let rS = cont.querySelector('.resizer-s');
-
-                                if (!rE) {
-                                    rE = document.createElement('div');
-                                    rE.className = 'resizer-e';
-                                    cont.appendChild(rE);
-                                }
-                                if (!rS) {
-                                    rS = document.createElement('div');
-                                    rS.className = 'resizer-s';
-                                    cont.appendChild(rS);
-                                }
-
-                                const bc = cont.closest('.certificate-border');
-                                makeDraggable(cont, bc);
-                                makeResizable(cont, img, rSE, rE, rS);
-                            });
-
-                            // Re-initialize image grid cells
-                            document.querySelectorAll('.grid-cell').forEach(cell => {
-                                // Re-attach file input listener (JS handlers not saved in HTML)
-                                let fi = cell.querySelector('input[type="file"]');
-                                if (!fi) {
-                                    fi = document.createElement('input');
-                                    fi.type = 'file';
-                                    fi.accept = 'image/*';
-                                    fi.style.display = 'none';
-                                    cell.appendChild(fi);
-                                }
-                                fi.addEventListener('change', function () {
-                                    if (fi.files && fi.files[0]) {
-                                        const r = new FileReader();
-                                        r.onload = function (ev) { setCellImage(cell, ev.target.result); };
-                                        r.readAsDataURL(fi.files[0]);
-                                    }
-                                    fi.value = '';
-                                });
-
-                                // Attach cell-level click/dblclick/paste handlers
-                                initGridCell(cell);
-
-                                // Re-attach Canva drag/resize to any saved cell-img-wrap
-                                const wrap = cell.querySelector('.cell-img-wrap');
-                                if (wrap) {
-                                    wrap._wrapInitialized = false; // allow re-init
-                                    cell.classList.add('has-image');
-                                    initCellWrap(cell, wrap);
-                                } else {
-                                    cell.classList.remove('has-image');
-                                    cell.style.cursor = 'pointer';
-                                }
-                            });
-
-                            // Re-initialize simple text areas
-                            document.querySelectorAll('.simple-text-area').forEach(area => {
-                                initTextArea(area);
-                                // Restore has-content class
-                                const isEmpty = !area.innerHTML.trim() || area.innerHTML.trim() === '<br>';
-                                area.classList.toggle('has-content', !isEmpty);
-                            });
-
-                            alert("Project loaded successfully!");
-                        } else {
-                            alert("Invalid project file.");
-                        }
-                    } catch (err) {
-                        alert("Error loading project file.");
-                    }
-                };
-                reader.readAsText(input.files[0]);
-            }
-            input.value = '';
-        }
-
-        // =====================================================
-        // ORIENTATION
-        // =====================================================
-        function changeOrientation() {
-            const orientation = document.getElementById('orientationSelect').value;
-            const styleId = 'print-orientation-style';
-            let styleEl = document.getElementById(styleId);
-
-            if (!styleEl) {
-                styleEl = document.createElement('style');
-                styleEl.id = styleId;
-                document.head.appendChild(styleEl);
-            }
-
-            if (orientation === 'landscape') {
-                document.body.classList.add('landscape-mode');
-                styleEl.innerHTML = `@page { size: A4 landscape !important; margin: 0; }`;
-            } else {
-                document.body.classList.remove('landscape-mode');
-                styleEl.innerHTML = `@page { size: A4 portrait !important; margin: 0; }`;
-            }
-        }
-
-        // =====================================================
-        // IMAGE BORDER SLIDER
-        // =====================================================
-        function updateImageBorder(value) {
-            document.documentElement.style.setProperty('--image-border-width', value + 'px');
-            document.getElementById('borderWidthDisplay').innerText = value + 'px';
-        }
-
-        // =====================================================
-        // TABLE COLUMN RESIZING (Google Docs Style)
-        // =====================================================
-        function setupTableResizing() {
-            let isResizing = false;
-            let currentCell = null;
-            let startX = 0;
-            let startWidth = 0;
-            let currentTable = null;
-            let resizeType = 'col'; 
-            let startY = 0;
-            let startHeight = 0;
-
-            document.addEventListener('mousemove', function (e) {
-                if (isResizing) return;
-                const target = e.target;
-                if ((target.tagName === 'TH' || target.tagName === 'TD') && target.closest('.simple-text-area')) {
-                    const rect = target.getBoundingClientRect();
-                    if (e.clientX > rect.right - 6) {
-                        target.style.cursor = 'col-resize';
-                        resizeType = 'col';
-                    } else if (e.clientY > rect.bottom - 6) {
-                        target.style.cursor = 'row-resize';
-                        resizeType = 'row';
-                    } else {
-                        target.style.cursor = 'text';
-                    }
-                }
-            });
-
-            document.addEventListener('mousedown', function (e) {
-                const target = e.target;
-                if ((target.tagName === 'TH' || target.tagName === 'TD') && target.closest('.simple-text-area')) {
-                    const rect = target.getBoundingClientRect();
-                    if (e.clientX > rect.right - 6) {
-                        e.preventDefault();
-                        isResizing = true;
-                        resizeType = 'col';
-                        currentCell = target;
-                        startX = e.clientX;
-                        startWidth = currentCell.offsetWidth;
-                        currentTable = currentCell.closest('table');
-                        if (currentTable && currentTable.style.tableLayout !== 'fixed') {
-                            const firstRow = currentTable.rows[0];
-                            if (firstRow) {
-                                let computedWidths = [];
-                                for (let i = 0; i < firstRow.cells.length; i++) computedWidths.push(firstRow.cells[i].offsetWidth);
-                                for (let i = 0; i < firstRow.cells.length; i++) {
-                                    firstRow.cells[i].style.width = computedWidths[i] + 'px';
-                                    firstRow.cells[i].style.minWidth = '0px';
-                                }
-                                currentTable.style.tableLayout = 'fixed';
-                                currentTable.style.width = currentTable.offsetWidth + 'px';
-                            }
-                        }
-                        if (!currentCell.style.width) {
-                            currentCell.style.width = currentCell.offsetWidth + 'px';
-                        }
-                    } else if (e.clientY > rect.bottom - 6) {
-                        e.preventDefault();
-                        isResizing = true;
-                        resizeType = 'row';
-                        currentCell = target;
-                        startY = e.clientY;
-                        startHeight = currentCell.offsetHeight;
-                        currentTable = currentCell.closest('table');
-                    }
-                }
-            });
-
-            document.addEventListener('mousemove', function (e) {
-                if (!isResizing || !currentCell) return;
-                if (resizeType === 'col') {
-                    const dx = e.clientX - startX;
-                    const newWidth = Math.max(25, startWidth + dx);
-                    currentCell.style.width = newWidth + 'px';
-                } else if (resizeType === 'row') {
-                    const dy = e.clientY - startY;
-                    const newHeight = Math.max(20, startHeight + dy);
-                    currentCell.style.height = newHeight + 'px';
-                }
-                if (window.updateTableHandles) {
-                    window.updateTableHandles(currentTable);
-                }
-            });
-
-            document.addEventListener('mouseup', function (e) {
-                if (isResizing) {
-                    isResizing = false;
-                    if (currentCell) currentCell.style.cursor = 'text';
-                    currentCell = null;
-                    currentTable = null;
-                }
-            });
-        }
-
-        setupTableResizing();
-        
-        // =====================================================
-        // RICH TEXT AND TABLE LOGIC
-        // =====================================================
-        let activeTable = null;
-        let activeCell = null;
-        const textToolbar = document.getElementById('textToolbar');
-        const tableToolbar = document.getElementById('tableToolbar');
-        const dragHandle = document.getElementById('tableDragHandle');
-        const resizeHandle = document.getElementById('tableResizeHandle');
-
-        document.addEventListener('selectionchange', () => {
-            const sel = window.getSelection();
-            if (!sel.isCollapsed && sel.rangeCount > 0) {
-                const range = sel.getRangeAt(0);
-                const rect = range.getBoundingClientRect();
-                
-                let inEditor = false;
-                let parent = range.commonAncestorContainer;
-                while(parent) {
-                    if (parent.classList && parent.classList.contains('simple-text-area')) {
-                        inEditor = true;
-                        break;
-                    }
-                    parent = parent.parentNode;
-                }
-                
-                if (inEditor && textToolbar) {
-                    textToolbar.classList.add('active');
-                    textToolbar.style.top = (window.scrollY + rect.top - 45) + 'px';
-                    textToolbar.style.left = (window.scrollX + rect.left + rect.width / 2 - textToolbar.offsetWidth / 2) + 'px';
-                }
-            } else {
-                if(textToolbar) textToolbar.classList.remove('active');
-            }
-        });
-
-        document.addEventListener('mousedown', (e) => {
-            if (e.target.closest('#tableToolbar') || e.target.closest('#tableDragHandle') || e.target.closest('#tableResizeHandle')) return;
-            if (e.target.closest('#textToolbar')) return;
-            
-            const cell = e.target.closest('td, th');
-            if (cell && cell.closest('.simple-text-area')) {
-                const table = cell.closest('table');
-                
-                document.querySelectorAll('table.selected-table').forEach(t => t.classList.remove('selected-table'));
-                table.classList.add('selected-table');
-                activeTable = table;
-                activeCell = cell;
-                
-                window.updateTableHandles(table);
-            } else {
-                if (activeTable) {
-                    activeTable.classList.remove('selected-table');
-                    activeTable = null;
-                    activeCell = null;
-                    if(tableToolbar) tableToolbar.classList.remove('active');
-                    if(dragHandle) dragHandle.classList.remove('active');
-                    if(resizeHandle) resizeHandle.classList.remove('active');
-                }
-            }
-        });
-
-        window.updateTableHandles = function(table) {
-            if (!tableToolbar || !dragHandle || !resizeHandle) return;
-            const rect = table.getBoundingClientRect();
-            
-            tableToolbar.classList.add('active');
-            tableToolbar.style.top = (window.scrollY + rect.top - 45) + 'px';
-            tableToolbar.style.left = (window.scrollX + rect.left) + 'px';
-            
-            dragHandle.classList.add('active');
-            dragHandle.style.top = (window.scrollY + rect.top - 12) + 'px';
-            dragHandle.style.left = (window.scrollX + rect.left - 12) + 'px';
-            
-            resizeHandle.classList.add('active');
-            resizeHandle.style.top = (window.scrollY + rect.bottom - 6) + 'px';
-            resizeHandle.style.left = (window.scrollX + rect.right - 6) + 'px';
-        };
-
-        window.tableAction = function(action) {
-            if (!activeTable || !activeCell) return;
-            
-            const tr = activeCell.closest('tr');
-            const tbody = activeTable.querySelector('tbody') || activeTable;
-            const colIndex = Array.from(tr.children).indexOf(activeCell);
-            
-            if (action === 'addRowAbove' || action === 'addRowBelow') {
-                const newRow = document.createElement('tr');
-                Array.from(tr.children).forEach(c => {
-                    const newCell = document.createElement(c.tagName);
-                    newCell.style.cssText = c.style.cssText;
-                    newCell.innerHTML = '<br>';
-                    newRow.appendChild(newCell);
-                });
-                if (action === 'addRowAbove') tbody.insertBefore(newRow, tr);
-                else tr.after(newRow);
-            } else if (action === 'addColLeft' || action === 'addColRight') {
-                Array.from(activeTable.rows).forEach(row => {
-                    const c = row.children[colIndex];
-                    if (!c) return;
-                    const newCell = document.createElement(c.tagName);
-                    newCell.style.cssText = c.style.cssText;
-                    newCell.innerHTML = '<br>';
-                    if (action === 'addColLeft') row.insertBefore(newCell, c);
-                    else c.after(newCell);
-                });
-            } else if (action === 'deleteRow') {
-                tr.remove();
-                if (activeTable.rows.length === 0) activeTable.remove();
-            } else if (action === 'deleteCol') {
-                Array.from(activeTable.rows).forEach(row => {
-                    if (row.children[colIndex]) row.children[colIndex].remove();
-                });
-                if (activeTable.rows[0] && activeTable.rows[0].children.length === 0) activeTable.remove();
-            } else if (action === 'deleteTable') {
-                activeTable.remove();
-                activeTable = null;
-            } else if (action === 'toggleBorder') {
-                const hasBorder = activeCell.style.border === 'none' || activeCell.style.border === '0px' || !activeCell.style.border;
-                Array.from(activeTable.querySelectorAll('td, th')).forEach(c => {
-                    c.style.border = hasBorder ? '1px solid #ccc' : 'none';
-                });
-            }
-            if(activeTable) window.updateTableHandles(activeTable);
-        };
-
-        let isDraggingTable = false;
-        let tableDragStartX, tableDragStartY, tableStartLeft, tableStartTop;
-        
-        if (dragHandle) {
-            dragHandle.addEventListener('mousedown', (e) => {
-                if (!activeTable) return;
-                e.preventDefault();
-                isDraggingTable = true;
-                
-                if (activeTable.style.position !== 'absolute') {
-                    const rect = activeTable.getBoundingClientRect();
-                    const parentRect = activeTable.parentElement.getBoundingClientRect();
-                    activeTable.style.position = 'absolute';
-                    activeTable.style.left = (rect.left - parentRect.left + activeTable.parentElement.scrollLeft) + 'px';
-                    activeTable.style.top = (rect.top - parentRect.top + activeTable.parentElement.scrollTop) + 'px';
-                    activeTable.style.margin = '0';
-                }
-                
-                tableDragStartX = e.clientX;
-                tableDragStartY = e.clientY;
-                tableStartLeft = parseFloat(activeTable.style.left) || 0;
-                tableStartTop = parseFloat(activeTable.style.top) || 0;
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (isDraggingTable && activeTable) {
-                    const dx = e.clientX - tableDragStartX;
-                    const dy = e.clientY - tableDragStartY;
-                    activeTable.style.left = (tableStartLeft + dx) + 'px';
-                    activeTable.style.top = (tableStartTop + dy) + 'px';
-                    window.updateTableHandles(activeTable);
-                }
-            });
-            
-            document.addEventListener('mouseup', () => {
-                if (isDraggingTable) isDraggingTable = false;
-            });
+        if (item.price !== undefined) {
+            const ri = tr.querySelector('.ri');
+            ri.value = item.price;
         }
         
-        let isResizingWholeTable = false;
-        let tableResizeStartX, tableStartWidth;
-        
-        if (resizeHandle) {
-            resizeHandle.addEventListener('mousedown', (e) => {
-                if (!activeTable) return;
-                e.preventDefault();
-                isResizingWholeTable = true;
-                tableResizeStartX = e.clientX;
-                tableStartWidth = activeTable.offsetWidth;
-            });
-            
-            document.addEventListener('mousemove', (e) => {
-                if (isResizingWholeTable && activeTable) {
-                    const dx = e.clientX - tableResizeStartX;
-                    activeTable.style.width = Math.max(100, tableStartWidth + dx) + 'px';
-                    window.updateTableHandles(activeTable);
-                }
-            });
-            
-            document.addEventListener('mouseup', () => {
-                if (isResizingWholeTable) isResizingWholeTable = false;
-            });
-        }
-
-        // Auto-fetch current date for certificate
-        (function () {
-            const dateReceivedEl = document.getElementById('date-received');
-            const jobCompletedEl = document.getElementById('job-completed');
-            const certNoEl = document.getElementById('cert-no');
-
-            if (dateReceivedEl && jobCompletedEl && certNoEl) {
-                const today = new Date();
-
-                // Format day, month (long), year
-                const optionsNum = { day: 'numeric', month: 'long', year: 'numeric' };
-                const formattedDate = today.toLocaleDateString('en-GB', optionsNum);
-
-                // Format short month for certificate number
-                let monthShort = today.toLocaleString('en-US', { month: 'short' });
-                // Ensure first letter is capitalized just in case
-                monthShort = monthShort.charAt(0).toUpperCase() + monthShort.slice(1);
-
-                const year = today.getFullYear();
-
-                dateReceivedEl.innerText = formattedDate;
-                jobCompletedEl.innerText = formattedDate;
-                certNoEl.innerText = `ALR-004/${monthShort}/${year}`;
+        if (data.customCols && item.customValues) {
+          data.customCols.forEach(col => {
+            if (item.customValues[col.id] !== undefined) {
+              const tdDiv = tr.querySelector(`td.custom-col-${col.newId} .expand-input`);
+              if (tdDiv) tdDiv.innerHTML = item.customValues[col.id];
             }
-        })();
-    </script>
+          });
+        }
+        
+        // Trigger calculation for the row
+        const qi = tr.querySelector('.qi');
+        if (qi) qi.dispatchEvent(new Event('input'));
+      });
+    } else {
+      for (let i = 0; i < 8; i++) addRow();
+    }
+
+    applyCurrency();
+    updateFooters();
+    recalcTotal();
+  }
+</script>
+
 </body>
-
 </html>
